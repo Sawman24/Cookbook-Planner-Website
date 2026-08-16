@@ -157,12 +157,13 @@
 
         /* --- Main Content Area --- */
         main {
-            padding: 20px;
-            max-width: 960px;
+            padding: 24px;
+            max-width: 1100px;
             margin: 30px auto;
             background-color: var(--card-background);
             box-shadow: 0 5px 15px rgba(0,0,0,0.08);
             border-radius: 12px;
+            box-sizing: border-box;
         }
 
         footer {
@@ -176,6 +177,7 @@
         /* --- Planner Specific Styles (Month View) --- */
         .calendar-container {
             margin-top: 20px;
+            width: 100%;
         }
 
         .calendar-header {
@@ -183,7 +185,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding: 10px 20px;
+            padding: 12px 20px;
             background-color: var(--light-pink);
             border-radius: 8px;
         }
@@ -198,10 +200,11 @@
             background-color: var(--primary-pink);
             color: white;
             border: none;
-            padding: 8px 15px;
+            padding: 8px 18px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 1em;
+            font-weight: 600;
             transition: background-color 0.3s ease;
         }
 
@@ -211,33 +214,40 @@
 
         .weekdays {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(7, minmax(0, 1fr));
             text-align: center;
             font-weight: bold;
             color: var(--primary-pink);
             margin-bottom: 10px;
+            gap: 6px;
         }
 
         .calendar-grid {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 5px;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 6px;
+            width: 100%;
         }
 
         .day-cell {
             background-color: var(--background-color);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 10px;
-            min-height: 100px; /* Give cells some height */
+            padding: 8px;
+            min-height: 105px;
+            min-width: 0; /* Prevents column blowup from content */
+            overflow: hidden;
             cursor: pointer;
             transition: all 0.2s ease;
-            position: relative; /* For day number positioning */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
         }
 
         .day-cell:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
         }
 
         .day-cell.current-month {
@@ -246,8 +256,8 @@
 
         .day-cell.other-month {
             background-color: var(--light-pink);
-            opacity: 0.7;
-            color: var(--text-color); /* Maintain readability in other-month cells */
+            opacity: 0.55;
+            color: var(--text-color);
         }
 
         .day-cell.today {
@@ -258,20 +268,25 @@
         .day-number {
             font-weight: bold;
             color: var(--primary-pink);
-            margin-bottom: 5px;
-            font-size: 1.2em;
+            margin-bottom: 4px;
+            font-size: 1.1em;
+            flex-shrink: 0;
         }
 
         .day-content {
-            font-size: 0.8em;
+            font-size: 0.78em;
             color: var(--text-color);
+            min-width: 0;
+            overflow: hidden;
+            flex-grow: 1;
         }
 
         .day-content p {
             margin: 2px 0;
-            white-space: nowrap; /* Prevent wrapping for brief display */
-            overflow: hidden;    /* Hide overflow */
-            text-overflow: ellipsis; /* Add ellipsis */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.35;
         }
 
         /* --- Modal Styles --- */

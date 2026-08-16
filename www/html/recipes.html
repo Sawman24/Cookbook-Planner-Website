@@ -155,12 +155,13 @@
 
         /* --- Main Content Area --- */
         main {
-            padding: 20px;
-            max-width: 960px;
+            padding: 24px;
+            max-width: 1100px;
             margin: 30px auto;
             background-color: var(--card-background);
             box-shadow: 0 5px 15px rgba(0,0,0,0.08); /* Softer shadow */
             border-radius: 12px; /* More rounded corners */
+            box-sizing: border-box;
         }
 
         footer {
@@ -209,6 +210,7 @@
             border-radius: 10px;
             margin-bottom: 30px;
             background-color: var(--card-background);
+            box-sizing: border-box;
         }
 
         .recipe-form h2 {
@@ -225,14 +227,15 @@
 
         .recipe-form input[type="text"],
         .recipe-form textarea {
-            width: calc(100% - 22px); /* Account for padding and border */
+            width: 100%;
             padding: 11px;
             margin-bottom: 18px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 1em;
-            background-color: var(--background-color); /* Matches body or card background */
+            background-color: var(--background-color);
             color: var(--text-color);
+            box-sizing: border-box;
             transition: border-color 0.3s ease;
         }
 
@@ -264,9 +267,20 @@
 
         /* Recipe Cards */
         .recipe-list {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .recipe-list h2 {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        #recipesContainer {
             display: grid;
-            gap: 25px; /* Spacing between cards */
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            width: 100%;
         }
 
         .recipe-card {
@@ -278,17 +292,20 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
             display: flex;
             flex-direction: column; /* Stack content inside card */
+            min-width: 0;
+            box-sizing: border-box;
         }
 
         .recipe-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             box-shadow: 0 6px 18px rgba(0,0,0,0.1);
         }
 
         .recipe-card h3 {
             color: var(--primary-pink);
             margin-bottom: 10px;
-            font-size: 1.3em;
+            font-size: 1.25em;
+            word-break: break-word;
         }
 
         .recipe-card h4 {
@@ -308,6 +325,8 @@
             font-size: 0.95em;
             color: var(--text-color);
             flex-grow: 1; /* Allow content to grow and push delete button down */
+            font-family: inherit;
+            margin: 0 0 10px 0;
         }
 
         .recipe-card button.delete-btn {
@@ -318,7 +337,7 @@
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.9em;
-            margin-top: 15px;
+            margin-top: 10px;
             align-self: flex-end; /* Align button to the right */
             transition: background-color 0.3s ease;
         }
@@ -330,28 +349,35 @@
         /* --- Search Bar Specific Styles --- */
         .search-bar-container {
             margin-bottom: 30px;
-            text-align: center;
-            padding: 15px;
+            padding: 16px 20px;
             border: 1px solid var(--border-color);
             border-radius: 10px;
             background-color: var(--card-background);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            box-sizing: border-box;
         }
 
         .search-bar-container label {
             font-weight: bold;
             color: var(--primary-pink);
-            margin-right: 10px;
+            margin: 0;
+            white-space: nowrap;
         }
 
         .search-bar-container input[type="text"] {
-            width: calc(100% - 150px); /* Adjust width to fit label and button */
-            max-width: 400px;
-            padding: 10px;
+            flex: 1 1 280px;
+            max-width: 500px;
+            padding: 10px 14px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 1em;
             background-color: var(--background-color);
             color: var(--text-color);
+            box-sizing: border-box;
             transition: border-color 0.3s ease;
         }
 
