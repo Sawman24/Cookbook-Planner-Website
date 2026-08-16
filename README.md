@@ -25,9 +25,9 @@ A clean virtual Recipe Box and Daily Meal Planner web application with a Flask R
      - Repository reference: `refs/heads/main`
      - Compose path: `docker-compose.yml`
    - **Web Editor option**: Paste the contents of `docker-compose.yml`.
-5. (Optional) Under **Environment variables**, set `PORT=8080` (or your preferred host port).
+5. (Optional) Under **Environment variables**, set `PORT=5050` (or your preferred host port).
 6. Click **Deploy the stack**.
-7. Access your website at `http://<your-server-ip>:8080`.
+7. Access your website at `http://<your-server-ip>:5050`.
 
 ---
 
@@ -42,7 +42,7 @@ cd website1
 docker compose up -d --build
 ```
 
-Access the app in your browser at `http://localhost:8080`.
+Access the app in your browser at `http://localhost:5050`.
 
 ---
 
