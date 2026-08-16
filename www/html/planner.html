@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Daily Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Variables for Easy Theming --- */
+        :root {
+            /* Light Mode Colors */
+            --primary-pink: #FF6B81; /* A vibrant, lovely pink */
+            --light-pink: #FFE8EE;    /* Very light, almost white pink */
+            --accent-pink: #F7CAC9;    /* Slightly deeper light pink */
+            --text-color: #333333;    /* Dark gray for readability */
+            --background-color: #FFFFFF;
+            --card-background: #FDFDFD;
+            --border-color: #E0E0E0;
+            --button-hover: #E85B70;
+            --modal-background: rgba(255, 255, 255, 0.95); /* Semi-transparent white for modal */
+
+
+            /* Floral Pattern (subtle, you can replace with your own image) */
+            --floral-pattern: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><circle cx="20" cy="20" r="5" fill="%23fcc" /><circle cx="80" cy="80" r="5" fill="%23fcc" /><circle cx="20" cy="80" r="5" /><circle cx="80" cy="20" r="5" fill="%23fcc" /></svg>');
+        }
+
+        /* --- Dark Mode Variables --- */
+        body.dark-mode {
+            --primary-pink: #FE9BA3; /* Slightly darker pink for dark mode contrast */
+            --light-pink: #29517A;    /* Dark purple-ish background */
+            --accent-pink: #5C4B5F; /* Darker accent for elements */
+            --text-color: #F0F0F0;    /* Light gray text */
+            --background-color: #172D44;
+            --card-background: #203F5F;
+            --border-color: #55445B;
+            --button-hover: #D04A5D;
+            --modal-background: rgba(44, 32, 45, 0.95); /* Semi-transparent dark for modal */
+            --floral-pattern: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><circle cx="20" cy="20" r="5" fill="%234A3C4D" /><circle cx="80" cy="80" r="5" fill="%234A3C4D" /><circle cx="20" cy="80" r="5" fill="%234A3C4D" /><circle cx="80" cy="20" r="5" fill="%234A3C4D" /></svg>');
+        }
+
+        /* --- Base Styles --- */
+        body {
+            font-family: 'Open Sans', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-image: var(--floral-pattern);
+            background-repeat: repeat;
+            background-size: 80px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--primary-pink);
+            font-family: 'Playfair Display', serif;
+            margin-top: 0;
+            margin-bottom: 0.5em;
+        }
+
+        /* --- Header & Navigation --- */
+        header {
+            background-color: var(--primary-pink);
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        header h1 {
+            color: white;
+            margin-bottom: 0.5em;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            display: block;
+            border-radius: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: var(--button-hover);
+        }
+
+        /* --- Dark Mode Toggle Switch --- */
+        .theme-switch-wrapper {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            height: 24px;
+            position: relative;
+            width: 48px;
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        .slider {
+            background-color: #ccc;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            background-color: #fff;
+            bottom: 4px;
+            content: "";
+            height: 16px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 16px;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-pink);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* --- Main Content Area --- */
+        main {
+            padding: 20px;
+            max-width: 960px;
+            margin: 30px auto;
+            background-color: var(--card-background);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-radius: 12px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: var(--text-color);
+            font-size: 0.9em;
+        }
+
+        /* --- Planner Specific Styles (Month View) --- */
+        .calendar-container {
+            margin-top: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: var(--light-pink);
+            border-radius: 8px;
+        }
+
+        .calendar-header h2 {
+            color: var(--primary-pink);
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .calendar-header button {
+            background-color: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .calendar-header button:hover {
+            background-color: var(--button-hover);
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary-pink);
+            margin-bottom: 10px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .day-cell {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 100px; /* Give cells some height */
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative; /* For day number positioning */
+        }
+
+        .day-cell:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .day-cell.current-month {
+            background-color: var(--card-background);
+        }
+
+        .day-cell.other-month {
+            background-color: var(--light-pink);
+            opacity: 0.7;
+            color: var(--text-color); /* Maintain readability in other-month cells */
+        }
+
+        .day-cell.today {
+            border: 2px solid var(--primary-pink);
+            box-shadow: 0 0 0 2px var(--primary-pink);
+        }
+
+        .day-number {
+            font-weight: bold;
+            color: var(--primary-pink);
+            margin-bottom: 5px;
+            font-size: 1.2em;
+        }
+
+        .day-content {
+            font-size: 0.8em;
+            color: var(--text-color);
+        }
+
+        .day-content p {
+            margin: 2px 0;
+            white-space: nowrap; /* Prevent wrapping for brief display */
+            overflow: hidden;    /* Hide overflow */
+            text-overflow: ellipsis; /* Add ellipsis */
+        }
+
+        /* --- Modal Styles --- */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--modal-background);
+            margin: auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+            color: var(--text-color); /* Ensure text is readable in modal */
+            border: 1px solid var(--border-color); /* Add border to modal */
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .close-button {
+            color: var(--primary-pink);
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: var(--button-hover);
+            text-decoration: none;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-header h3 {
+            color: var(--primary-pink);
+            font-size: 1.6em;
+            margin: 0;
+        }
+
+        .modal-section {
+            margin-bottom: 25px;
+        }
+
+        .modal-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary-pink);
+            font-size: 1.1em;
+        }
+
+        .modal-section select,
+        .modal-section input[type="text"],
+        .modal-section textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: border-color 0.3s ease;
+        }
+
+        .modal-section select:focus,
+        .modal-section input[type="text"]:focus,
+        .modal-section textarea:focus {
+            border-color: var(--primary-pink);
+            outline: none;
+        }
+
+        .meal-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .modal-section button.save-day-btn {
+            background-color: var(--primary-pink);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            display: block;
+            width: fit-content;
+            margin: 20px auto 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-section button.save-day-btn:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+        }
+
+
+        /* --- Responsive Design (Media Queries) --- */
+        @media (max-width: 768px) {
+            header {
+                padding: 0.8em 0;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            nav ul li {
+                margin: 0;
+            }
+
+            nav a {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
+
+            main {
+                margin: 20px auto;
+                padding: 15px;
+            }
+
+            .theme-switch-wrapper {
+                position: static;
+                justify-content: center;
+                margin-top: 10px;
+                color: var(--text-color);
+            }
+
+            .calendar-grid {
+                grid-template-columns: repeat(7, 1fr); /* Keep 7 columns, but cells will be smaller */
+            }
+
+            .day-cell {
+                min-height: 80px; /* Reduce cell height on small screens */
+                padding: 5px;
+                font-size: 0.9em;
+            }
+
+            .day-number {
+                font-size: 1em;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .close-button {
+                font-size: 30px;
+                top: 10px;
+                right: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+             .day-cell {
+                min-height: 60px;
+                padding: 3px;
+                font-size: 0.8em;
+            }
+            .day-number {
+                font-size: 0.9em;
+            }
+            .day-content {
+                font-size: 0.7em;
+            }
+            .calendar-header h2 {
+                font-size: 1.4em;
+            }
+            .calendar-header button {
+                padding: 6px 10px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="theme-switch-wrapper">
+            <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox" />
+                <div class="slider round"></div>
+            </label>
+            <em>Enable Dark Mode!</em>
+        </div>
+        <h1>My Daily Planner</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="recipes.html">My Recipes</a></li>
+                <li><a href="planner.html">Planner</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="calendar-container">
+            <div class="calendar-header">
+                <button id="prevMonthBtn">&lt; Prev</button>
+                <h2 id="currentMonthYear"></h2>
+                <button id="nextMonthBtn">Next &gt;</button>
+            </div>
+            <div class="weekdays">
+                <span>Sun</span>
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+            </div>
+            <div id="calendarGrid" class="calendar-grid">
+                </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Sawyer Tobin (for My Lovely Girlfriend)</p>
+    </footer>
+
+    <div id="dayModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-header">
+                <h3 id="modalDate"></h3>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <label for="modalBreakfast">Breakfast:</label>
+                    <div class="meal-input-group">
+                        <select id="modalBreakfast"></select>
+                        <input type="text" id="modalBreakfastCustom" class="custom-meal-input" placeholder="Or enter custom meal">
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <label for="modalLunch">Lunch:</label>
+                    <div class="meal-input-group">
+                        <select id="modalLunch"></select>
+                        <input type="text" id="modalLunchCustom" class="custom-meal-input" placeholder="Or enter custom meal">
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <label for="modalDinner">Dinner:</label>
+                    <div class="meal-input-group">
+                        <select id="modalDinner"></select>
+                        <input type="text" id="modalDinnerCustom" class="custom-meal-input" placeholder="Or enter custom meal">
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <label for="modalTasks">Tasks:</label>
+                    <textarea id="modalTasks" rows="4" placeholder="e.g., Groceries, Laundry, Call Mom"></textarea>
+                </div>
+                <div class="modal-section">
+                    <label for="modalNotes">Notes:</label>
+                    <textarea id="modalNotes" rows="4" placeholder="Any special notes for the day"></textarea>
+                </div>
+                <div class="modal-section">
+                    <button id="saveDayDataBtn" class="save-day-btn">Save Day</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Dark Mode Logic ---
+            const themeSwitch = document.getElementById('checkbox');
+            const currentTheme = localStorage.getItem('theme');
+
+            if (currentTheme) {
+                document.body.classList.add(currentTheme);
+                if (currentTheme === 'dark-mode') {
+                    themeSwitch.checked = true;
+                }
+            }
+
+            if (themeSwitch) {
+                themeSwitch.addEventListener('change', function() {
+                    if (this.checked) {
+                        document.body.classList.add('dark-mode');
+                        localStorage.setItem('theme', 'dark-mode');
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                        localStorage.setItem('theme', 'light-mode');
+                    }
+                });
+            }
+            // --- End Dark Mode Logic ---
+
+            // --- API Related Functions (Shared or Planner Specific) ---
+            async function fetchRecipes() {
+                try {
+                    const response = await fetch('/api/recipes');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching recipes:', error);
+                    return [];
+                }
+            }
+
+            async function fetchPlannerData() {
+                try {
+                    const response = await fetch('/api/planner');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching planner data:', error);
+                    return {}; // Return empty object on error
+                }
+            }
+
+            async function savePlannerData(dateKey, data) {
+                try {
+                    const response = await fetch(`/api/planner/${dateKey}`, { // Send specific day data
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const result = await response.json();
+                    console.log(result.message);
+                    return true;
+                } catch (error) {
+                    console.error('Error saving day data:', error);
+                    alert('Failed to save day data.');
+                    return false;
+                }
+            }
+
+            // --- Planner Specific Logic (Month View) ---
+            const calendarGrid = document.getElementById('calendarGrid');
+            const currentMonthYearHeader = document.getElementById('currentMonthYear');
+            const prevMonthBtn = document.getElementById('prevMonthBtn');
+            const nextMonthBtn = document.getElementById('nextMonthBtn');
+
+            const dayModal = document.getElementById('dayModal');
+            const closeButton = document.querySelector('.close-button');
+            const modalDateHeader = document.getElementById('modalDate');
+            const modalBreakfastSelect = document.getElementById('modalBreakfast');
+            const modalBreakfastCustom = document.getElementById('modalBreakfastCustom');
+            const modalLunchSelect = document.getElementById('modalLunch');
+            const modalLunchCustom = document.getElementById('modalLunchCustom');
+            const modalDinnerSelect = document.getElementById('modalDinner');
+            const modalDinnerCustom = document.getElementById('modalDinnerCustom');
+            const modalTasks = document.getElementById('modalTasks');
+            const modalNotes = document.getElementById('modalNotes');
+            const saveDayDataBtn = document.getElementById('saveDayDataBtn');
+
+            let currentDisplayDate = new Date(); // Represents the month/year currently displayed
+            let allRecipes = []; // Stores recipes for dropdowns
+            let plannerData = {}; // Stores all planner data from API
+
+            let selectedDateKey = null; // To store the YYYY-MM-DD of the day being edited
+
+            // Helper to format date for display
+            function getFormattedDate(date) {
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                return date.toLocaleDateString('en-US', options);
+            }
+
+            // Helper to get YYYY-MM-DD string
+            function getDateKey(date) {
+                return date.toISOString().slice(0, 10);
+            }
+
+            // Function to populate meal select dropdowns
+            function populateMealSelect(selectElement, customInputElement, selectedMeal, recipes) {
+                selectElement.innerHTML = ''; // Clear existing options
+
+                const notPlannedOption = document.createElement('option');
+                notPlannedOption.value = '';
+                notPlannedOption.textContent = 'Not planned';
+                selectElement.appendChild(notPlannedOption);
+
+                const customOption = document.createElement('option');
+                customOption.value = 'custom';
+                customOption.textContent = 'Custom meal...';
+                selectElement.appendChild(customOption);
+
+                recipes.forEach(recipe => {
+                    const option = document.createElement('option');
+                    option.value = recipe.title;
+                    option.textContent = recipe.title;
+                    selectElement.appendChild(option);
+                });
+
+                // Set initial selection and custom input visibility
+                if (selectedMeal === '' || selectedMeal === 'Not planned') {
+                    selectElement.value = '';
+                    customInputElement.style.display = 'none';
+                    customInputElement.value = '';
+                } else if (recipes.some(r => r.title === selectedMeal)) {
+                    selectElement.value = selectedMeal;
+                    customInputElement.style.display = 'none';
+                    customInputElement.value = '';
+                } else {
+                    selectElement.value = 'custom';
+                    customInputElement.value = selectedMeal;
+                    customInputElement.style.display = 'block';
+                }
+
+                // Event listener for select changes
+                selectElement.onchange = () => {
+                    if (selectElement.value === 'custom') {
+                        customInputElement.style.display = 'block';
+                        customInputElement.focus();
+                    } else {
+                        customInputElement.style.display = 'none';
+                        customInputElement.value = ''; // Clear custom input if recipe is selected
+                    }
+                };
+            }
+
+            // Render the calendar grid for the current month
+            async function renderCalendar() {
+                calendarGrid.innerHTML = ''; // Clear previous grid
+                currentMonthYearHeader.textContent = currentDisplayDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+                plannerData = await fetchPlannerData(); // Fetch all planner data
+                allRecipes = await fetchRecipes(); // Fetch all recipes
+
+                const year = currentDisplayDate.getFullYear();
+                const month = currentDisplayDate.getMonth(); // 0-indexed
+
+                // Get first day of the month
+                const firstDayOfMonth = new Date(year, month, 1);
+                // Get the day of the week for the first day (0=Sunday, 6=Saturday)
+                const startingDay = firstDayOfMonth.getDay();
+
+                // Get number of days in current month
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                // Get number of days in previous month
+                const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+                // Get today's date for highlighting
+                const today = new Date();
+                const todayKey = getDateKey(today);
+
+                // Add empty cells for days before the 1st of the month
+                for (let i = 0; i < startingDay; i++) {
+                    const dayCell = document.createElement('div');
+                    dayCell.classList.add('day-cell', 'other-month');
+                    const prevMonthDay = daysInPrevMonth - startingDay + i + 1;
+                    dayCell.innerHTML = `<div class="day-number">${prevMonthDay}</div>`;
+                    calendarGrid.appendChild(dayCell);
+                }
+
+                // Add cells for days of the current month
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const date = new Date(year, month, i);
+                    const dateKey = getDateKey(date);
+                    const dayData = plannerData[dateKey] || {}; // Get data for this specific day
+
+                    const dayCell = document.createElement('div');
+                    dayCell.classList.add('day-cell', 'current-month');
+                    if (dateKey === todayKey) {
+                        dayCell.classList.add('today');
+                    }
+                    dayCell.dataset.dateKey = dateKey; // Store date key for easy lookup
+
+                    let mealsSummary = [];
+                    if (dayData.meals) {
+                        if (dayData.meals.breakfast && dayData.meals.breakfast !== 'Not planned') mealsSummary.push(`B: ${dayData.meals.breakfast}`);
+                        if (dayData.meals.lunch && dayData.meals.lunch !== 'Not planned') mealsSummary.push(`L: ${dayData.meals.lunch}`);
+                        if (dayData.meals.dinner && dayData.meals.dinner !== 'Not planned') mealsSummary.push(`D: ${dayData.meals.dinner}`);
+                    }
+                    let tasksSummary = dayData.tasks ? dayData.tasks.split('\n')[0] : '';
+                    let notesSummary = dayData.notes ? dayData.notes.split('\n')[0] : '';
+
+
+                    dayCell.innerHTML = `
+                        <div class="day-number">${i}</div>
+                        <div class="day-content">
+                            ${mealsSummary.length > 0 ? `<p>${mealsSummary.join(', ')}</p>` : ''}
+                            ${tasksSummary ? `<p>Task: ${tasksSummary}</p>` : ''}
+                            ${notesSummary ? `<p>Note: ${notesSummary}</p>` : ''}
+                        </div>
+                    `;
+                    calendarGrid.appendChild(dayCell);
+
+                    // Add click listener to open modal
+                    dayCell.addEventListener('click', () => openDayModal(dateKey));
+                }
+
+                // --- MODIFIED LOGIC FOR FILLER CELLS ---
+                // Calculate the number of cells already rendered
+                const cellsRendered = startingDay + daysInMonth;
+                // Calculate how many filler cells are needed to complete the LAST week
+                const cellsNeededToCompleteLastWeek = (7 - (cellsRendered % 7)) % 7;
+
+                for (let i = 1; i <= cellsNeededToCompleteLastWeek; i++) {
+                    const dayCell = document.createElement('div');
+                    dayCell.classList.add('day-cell', 'other-month');
+                    dayCell.innerHTML = `<div class="day-number">${i}</div>`;
+                    calendarGrid.appendChild(dayCell);
+                }
+            }
+
+            // Open the modal for a specific day
+            function openDayModal(dateKey) {
+                selectedDateKey = dateKey;
+                const date = new Date(dateKey + 'T00:00:00'); // Ensure UTC for consistent date parsing
+                modalDateHeader.textContent = getFormattedDate(date);
+
+                const dayData = plannerData[dateKey] || { meals: {}, tasks: '', notes: '' };
+                const meals = dayData.meals || { breakfast: '', lunch: '', dinner: '' };
+
+                // Populate meal selects and custom inputs
+                populateMealSelect(modalBreakfastSelect, modalBreakfastCustom, meals.breakfast, allRecipes);
+                populateMealSelect(modalLunchSelect, modalLunchCustom, meals.lunch, allRecipes);
+                populateMealSelect(modalDinnerSelect, modalDinnerCustom, meals.dinner, allRecipes);
+
+                modalTasks.value = dayData.tasks || '';
+                modalNotes.value = dayData.notes || '';
+
+                dayModal.style.display = 'flex'; // Use flex to center the modal
+                setTimeout(() => dayModal.classList.add('show'), 10); // Trigger transition
+            }
+
+            // Close the modal
+            function closeModal() {
+                dayModal.classList.remove('show');
+                setTimeout(() => dayModal.style.display = 'none', 200); // Hide after transition
+                selectedDateKey = null; // Clear selected date
+            }
+
+            // Event listeners for modal
+            closeButton.addEventListener('click', closeModal);
+            window.addEventListener('click', (event) => {
+                if (event.target === dayModal) {
+                    closeModal();
+                }
+            });
+
+            // Save data from modal
+            saveDayDataBtn.addEventListener('click', async () => {
+                if (!selectedDateKey) return;
+
+                let breakfastMeal = (modalBreakfastSelect.value === 'custom') ? modalBreakfastCustom.value.trim() : modalBreakfastSelect.value;
+                if (breakfastMeal === '') breakfastMeal = 'Not planned';
+
+                let lunchMeal = (modalLunchSelect.value === 'custom') ? modalLunchCustom.value.trim() : modalLunchSelect.value;
+                if (lunchMeal === '') lunchMeal = 'Not planned';
+
+                let dinnerMeal = (modalDinnerSelect.value === 'custom') ? modalDinnerCustom.value.trim() : modalDinnerSelect.value;
+                if (dinnerMeal === '') dinnerMeal = 'Not planned';
+
+                const updatedDayData = {
+                    meals: {
+                        breakfast: breakfastMeal,
+                        lunch: lunchMeal,
+                        dinner: dinnerMeal
+                    },
+                    tasks: modalTasks.value.trim(),
+                    notes: modalNotes.value.trim()
+                };
+
+                const success = await savePlannerData(selectedDateKey, updatedDayData);
+                if (success) {
+                    closeModal();
+                    renderCalendar(); // Re-render calendar to show updated data
+                }
+            });
+
+
+            // Navigation buttons for calendar
+            prevMonthBtn.addEventListener('click', () => {
+                currentDisplayDate.setMonth(currentDisplayDate.getMonth() - 1);
+                renderCalendar();
+            });
+
+            nextMonthBtn.addEventListener('click', () => {
+                currentDisplayDate.setMonth(currentDisplayDate.getMonth() + 1);
+                renderCalendar();
+            });
+
+            // Initial render of the calendar
+            renderCalendar();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Home, My Love!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Variables for Easy Theming --- */
+        :root {
+            /* Light Mode Colors */
+            --primary-pink: #FF6B81; /* A vibrant, lovely pink */
+            --light-pink: #FFE8EE;    /* Very light, almost white pink */
+            --accent-pink: #F7CAC9;    /* Slightly deeper light pink */
+            --text-color: #333333;    /* Dark gray for readability */
+            --background-color: #FFFFFF;
+            --card-background: #FDFDFD;
+            --border-color: #E0E0E0;
+            --button-hover: #E85B70;
+
+            /* Floral Pattern (subtle, you can replace with your own image) */
+            --floral-pattern: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><circle cx="20" cy="20" r="5" fill="%23fcc" /><circle cx="80" cy="80" r="5" fill="%23fcc" /><circle cx="20" cy="80" r="5" fill="%23fcc" /><circle cx="80" cy="20" r="5" fill="%23fcc" /></svg>');
+            /* This is a very simple, abstract floral pattern in SVG. You might want to use a real, subtle floral PNG/SVG if you find one! */
+        }
+
+        /* --- Dark Mode Variables --- */
+        body.dark-mode {
+            --primary-pink: #E85B70; /* Slightly darker pink for dark mode contrast */
+            --light-pink: #3A2E3D;    /* Dark purple-ish background */
+            --accent-pink: #5C4B5F; /* Darker accent for elements */
+            --text-color: #F0F0F0;    /* Light gray text */
+            --background-color: #2C202D;
+            --card-background: #3F3243;
+            --border-color: #55445B;
+            --button-hover: #D04A5D;
+            --floral-pattern: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><circle cx="20" cy="20" r="5" fill="%234A3C4D" /><circle cx="80" cy="80" r="5" fill="%234A3C4D" /><circle cx="20" cy="80" r="5" fill="%234A3C4D" /><circle cx="80" cy="20" r="5" fill="%234A3C4D" /></svg>');
+        }
+
+        /* --- Base Styles --- */
+        body {
+            font-family: 'Open Sans', 'Arial', sans-serif; /* A slightly softer font */
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth dark mode transition */
+            background-image: var(--floral-pattern);
+            background-repeat: repeat;
+            background-size: 80px; /* Adjust size of pattern */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--primary-pink);
+            font-family: 'Playfair Display', serif; /* A more elegant font for headings */
+            margin-top: 0;
+            margin-bottom: 0.5em;
+        }
+
+        /* --- Header & Navigation --- */
+        header {
+            background-color: var(--primary-pink);
+            color: white;
+            padding: 1em 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative; /* For positioning the theme switch */
+        }
+
+        header h1 {
+            color: white; /* Ensure heading is white in header */
+            margin-bottom: 0.5em;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            display: block;
+            border-radius: 20px; /* Softer button look */
+            transition: background-color 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: var(--button-hover);
+        }
+
+        /* --- Dark Mode Toggle Switch --- */
+        .theme-switch-wrapper {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white; /* Text color for the switch label */
+            font-size: 0.9em;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            height: 24px;
+            position: relative;
+            width: 48px;
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        .slider {
+            background-color: #ccc;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            background-color: #fff;
+            bottom: 4px;
+            content: "";
+            height: 16px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 16px;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-pink);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* --- Main Content Area --- */
+        main {
+            padding: 20px;
+            max-width: 960px;
+            margin: 30px auto;
+            background-color: var(--card-background);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08); /* Softer shadow */
+            border-radius: 12px; /* More rounded corners */
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: var(--text-color);
+            font-size: 0.9em;
+        }
+
+        /* --- Section Specifics --- */
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background-color: var(--light-pink);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            color: var(--primary-pink); /* Text in hero section */
+        }
+
+        .hero p {
+            font-size: 1.1em;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* New: Meal Planner section on homepage */
+        .meal-summary {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px;
+            background-color: var(--light-pink);
+            border-radius: 8px;
+            color: var(--primary-pink);
+        }
+
+        .meal-summary h2 {
+            margin-bottom: 20px;
+            color: var(--primary-pink);
+        }
+
+        .meal-cards-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .meal-day-card {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            width: 250px; /* Fixed width for consistency */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: left;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .meal-day-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .meal-day-card h3 {
+            color: var(--primary-pink);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .meal-day-card p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: var(--text-color);
+        }
+
+        .meal-day-card p strong {
+            color: var(--primary-pink);
+        }
+
+        /* Camera Page (styles included but not directly used on index.html) */
+        .camera-container {
+            text-align: center;
+        }
+
+        iframe {
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-top: 15px;
+            background-color: #000; /* Dark background for camera feed */
+        }
+
+        /* Recipe Form (styles included but not directly used on index.html) */
+        .recipe-form {
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            background-color: var(--card-background);
+        }
+
+        .recipe-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .recipe-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary-pink);
+        }
+
+        .recipe-form input[type="text"],
+        .recipe-form textarea {
+            width: calc(100% - 22px); /* Account for padding and border */
+            padding: 11px;
+            margin-bottom: 18px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1em;
+            background-color: var(--background-color); /* Matches body or card background */
+            color: var(--text-color);
+            transition: border-color 0.3s ease;
+        }
+
+        .recipe-form input[type="text"]:focus,
+        .recipe-form textarea:focus {
+            border-color: var(--primary-pink);
+            outline: none;
+        }
+
+        .recipe-form button {
+            background-color: var(--primary-pink);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px; /* Pill-shaped button */
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            display: block;
+            width: fit-content;
+            margin: 0 auto;
+            transition: background-color 0.3s ease;
+        }
+
+        .recipe-form button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+
+        /* Recipe Cards (styles included but not directly used on index.html) */
+        .recipe-list {
+            display: grid;
+            gap: 25px; /* Spacing between cards */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+        }
+
+        .recipe-card {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column; /* Stack content inside card */
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        }
+
+        .recipe-card h3 {
+            color: var(--primary-pink);
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .recipe-card h4 {
+            color: var(--primary-pink);
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+
+        .recipe-card pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: var(--background-color); /* Lighter background for code/text blocks */
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-size: 0.95em;
+            color: var(--text-color);
+            flex-grow: 1; /* Allow content to grow and push delete button down */
+        }
+
+        .recipe-card button.delete-btn {
+            background-color: #DC3545; /* Standard red for delete */
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 15px;
+            align-self: flex-end; /* Align button to the right */
+            transition: background-color 0.3s ease;
+        }
+
+        .recipe-card button.delete-btn:hover {
+            background-color: #C82333;
+        }
+
+        /* --- Responsive Design (Media Queries) --- */
+        @media (max-width: 768px) {
+            header {
+                padding: 0.8em 0;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            nav ul li {
+                margin: 0;
+            }
+
+            nav a {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
+
+            main {
+                margin: 20px auto;
+                padding: 15px;
+            }
+
+            .theme-switch-wrapper {
+                position: static; /* Move switch below nav on small screens */
+                justify-content: center;
+                margin-top: 10px;
+                color: var(--text-color); /* Adjust color for dark mode */
+            }
+
+            .meal-cards-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .meal-day-card {
+                width: 90%; /* Adjust width for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="theme-switch-wrapper">
+            <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox" />
+                <div class="slider round"></div>
+            </label>
+            <em>Enable Dark Mode!</em>
+        </div>
+        <h1>Welcome Home, My Love!</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="recipes.html">My Recipes</a></li>
+                <li><a href="planner.html">Planner</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <p>So glad you're here! This little corner of the internet is just for you.</p>
+            <p>Feel free to explore your recipes, check the camera feed, or plan out your days!</p>
+        </section>
+
+        <section class="meal-summary">
+            <h2>Upcoming Meals</h2>
+            <div id="upcomingMealsContainer" class="meal-cards-container">
+                <p>Loading upcoming meals...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Sawyer Tobin (for My Lovely Girlfriend)</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Dark Mode Logic ---
+            const themeSwitch = document.getElementById('checkbox');
+            const currentTheme = localStorage.getItem('theme');
+
+            if (currentTheme) {
+                document.body.classList.add(currentTheme);
+                if (currentTheme === 'dark-mode') {
+                    themeSwitch.checked = true;
+                }
+            }
+
+            if (themeSwitch) { // Ensure the switch exists before adding listener
+                themeSwitch.addEventListener('change', function() {
+                    if (this.checked) {
+                        document.body.classList.add('dark-mode');
+                        localStorage.setItem('theme', 'dark-mode');
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                        localStorage.setItem('theme', 'light-mode');
+                    }
+                });
+            }
+            // --- End Dark Mode Logic ---
+
+            // --- Recipe related functions (UPDATED to use API, but still only relevant for recipes.html) ---
+            // These functions will primarily be used on recipes.html, but the core logic is here
+            // Note: recipesContainer and addRecipeForm will likely be null on index.html
+            // as those elements are expected to be on recipes.html.
+            const recipesContainer = document.getElementById('recipesContainer');
+            const addRecipeForm = document.getElementById('addRecipeForm');
+
+            async function fetchRecipes() {
+                try {
+                    const response = await fetch('/api/recipes'); // Use /api/recipes as defined in Flask
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data;
+                } catch (error) {
+                    console.error('Error fetching recipes:', error);
+                    return []; // Return empty array on error
+                }
+            }
+
+            // This function is generally not needed if addRecipe/deleteRecipe hit API directly
+            // Keeping for completeness if future "save all" is desired.
+            async function saveRecipes(recipesArray) {
+                try {
+                    const response = await fetch('/api/recipes', {
+                        method: 'POST', // Flask POST for adding/overwriting all recipes
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(recipesArray) // Flask expects the whole array for full save
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    console.log(data.message);
+                } catch (error) {
+                    console.error('Error saving recipes:', error);
+                }
+            }
+
+            async function addRecipe(title, ingredients, instructions) {
+                const newRecipe = { title, ingredients, instructions };
+                try {
+                    const response = await fetch('/api/recipes', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newRecipe)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const result = await response.json();
+                    console.log(result.message);
+                    // Re-fetch and display all recipes after adding one if on recipes.html
+                    if (recipesContainer) {
+                        displayRecipes();
+                    }
+                } catch (error) {
+                    console.error('Error adding recipe:', error);
+                    alert('Failed to add recipe.');
+                }
+            }
+
+            async function deleteRecipe(recipeId) {
+                try {
+                    const response = await fetch(`/api/recipes/${recipeId}`, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const result = await response.json();
+                    console.log(result.message);
+                    // Re-fetch and display all recipes after deleting one if on recipes.html
+                    if (recipesContainer) {
+                        displayRecipes();
+                    }
+                } catch (error) {
+                    console.error('Error deleting recipe:', error);
+                    alert('Failed to delete recipe.');
+                }
+            }
+
+            // This function needs to be adapted for recipes.html
+            async function displayRecipes() {
+                if (!recipesContainer) return; // Exit if not on recipes page (i.e., if on index.html)
+
+                const recipes = await fetchRecipes();
+                recipesContainer.innerHTML = '';
+                if (recipes.length === 0) {
+                    recipesContainer.innerHTML = '<p>No recipes added yet. Visit <a href="recipes.html">My Recipes</a> to add your first one!</p>';
+                    return;
+                }
+
+                recipes.forEach((recipe) => {
+                    const recipeCard = document.createElement('div');
+                    recipeCard.classList.add('recipe-card');
+                    recipeCard.innerHTML = `
+                        <h3>${recipe.title}</h3>
+                        <h4>Ingredients:</h4>
+                        <pre>${recipe.ingredients}</pre>
+                        <h4>Instructions:</h4>
+                        <pre>${recipe.instructions}</pre>
+                        <button class="delete-btn" data-recipe-id="${recipe.id}">Delete Recipe</button>
+                    `;
+                    recipesContainer.appendChild(recipeCard);
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const recipeIdToDelete = parseInt(e.target.dataset.recipeId);
+                        const recipeTitle = e.target.closest('.recipe-card')?.querySelector('h3')?.textContent || 'this recipe';
+                        if (confirm(`Are you sure you want to delete "${recipeTitle}"?`)) {
+                            await deleteRecipe(recipeIdToDelete);
+                        }
+                    });
+                });
+            }
+
+            // Add recipe form listener (this will only be present on recipes.html)
+            if (addRecipeForm) {
+                addRecipeForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const title = document.getElementById('recipeTitle').value;
+                    const ingredients = document.getElementById('recipeIngredients').value;
+                    const instructions = document.getElementById('recipeInstructions').value;
+
+                    if (title && ingredients && instructions) {
+                        await addRecipe(title, ingredients, instructions);
+                        addRecipeForm.reset();
+                    } else {
+                        alert('Please fill in all fields!');
+                    }
+                });
+                displayRecipes(); // Initial display for recipes.html
+            }
+            // --- End Recipe related functions ---
+
+            // --- Homepage Meal Display Logic (UPDATED to use API) ---
+            const upcomingMealsContainer = document.getElementById('upcomingMealsContainer');
+
+            function getFormattedDate(date) {
+                const options = { weekday: 'long', month: 'long', day: 'numeric' };
+                return date.toLocaleDateString('en-US', options);
+            }
+
+            async function loadUpcomingMeals() {
+                if (!upcomingMealsContainer) return; // Exit if container doesn't exist on this page
+
+                upcomingMealsContainer.innerHTML = '<p>Loading upcoming meals...</p>'; // Show loading state
+                try {
+                    const response = await fetch('/api/planner');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const storedPlannerData = await response.json();
+                    upcomingMealsContainer.innerHTML = ''; // Clear loading state
+
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0); // Normalize to start of day
+
+                    let hasMealsPlanned = false;
+                    for (let i = 0; i < 3; i++) {
+                        const targetDate = new Date(today);
+                        targetDate.setDate(today.getDate() + i);
+                        const dateKey = targetDate.toISOString().slice(0, 10); // YYYY-MM-DD format
+
+                        const dayData = storedPlannerData[dateKey] || {};
+                        const meals = dayData.meals || { breakfast: 'Not planned', lunch: 'Not planned', dinner: 'Not planned' };
+
+                        if (meals.breakfast !== 'Not planned' || meals.lunch !== 'Not planned' || meals.dinner !== 'Not planned') {
+                            hasMealsPlanned = true;
+                        }
+
+                        const dayCard = document.createElement('div');
+                        dayCard.classList.add('meal-day-card');
+                        dayCard.innerHTML = `
+                            <h3>${i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : getFormattedDate(targetDate)}</h3>
+                            <p><strong>Breakfast:</strong> ${meals.breakfast || 'Not planned'}</p>
+                            <p><strong>Lunch:</strong> ${meals.lunch || 'Not planned'}</p>
+                            <p><strong>Dinner:</strong> ${meals.dinner || 'Not planned'}</p>
+                        `;
+                        upcomingMealsContainer.appendChild(dayCard);
+                    }
+
+                    if (!hasMealsPlanned && upcomingMealsContainer.children.length === 0) {
+                        upcomingMealsContainer.innerHTML = '<p>No meals planned for the upcoming days. Visit the <a href="planner.html">Planner</a> to add some!</p>';
+                    }
+                } catch (error) {
+                    console.error('Error loading upcoming meals:', error);
+                    upcomingMealsContainer.innerHTML = '<p>Error loading meals. Please try again later.</p>';
+                }
+            }
+
+            // Call this function when the page loads
+            loadUpcomingMeals();
+        });
+    </script>
+</body>
+</html>

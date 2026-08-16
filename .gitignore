@@ -1,0 +1,22 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Sockets & temporary logs
+*.sock
+*.log
+
+# Sensitive Wireguard VPN keys
+configs/*.conf
+
+# OS generated files
+.DS_Store
+Thumbs.db

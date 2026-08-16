@@ -1,0 +1,48 @@
+server {
+    listen 80;
+    listen [::]:80;
+
+    # Your server name - make sure this matches your Pi's IP address and any hostname you set up (like myrecipes.local)
+    server_name 192.168.0.235;
+
+    # Set the root directory for your website's static files (HTML, CSS, JS)
+    root /var/www/html;
+
+    # Add index.html to the list of files Nginx will try to serve when a directory is requested
+    index index.html index.htm index.nginx-debian.html;
+
+    # Main location block for the root of your site (serves your recipes.html if accessed directly, or index.html)
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # --- THIS IS THE CRITICAL BLOCK FOR YOUR FLASK API ---
+    # This block tells Nginx to forward requests for /api to your Gunicorn service
+    location /api {
+        include proxy_params; # Includes standard Nginx headers for proxying (e.g., Host, X-Real-IP)
+        # IMPORTANT: This path MUST point to the Gunicorn socket file in your app's directory
+        proxy_pass http://unix:/home/camera/recipe_api/recipe_api.sock;
+    }
+
+    # Your existing location block for /recipes/
+    # This would serve static files from /var/www/html/recipes/ if you had content there
+    location /recipes/ {
+        try_files $uri $uri/ =404;
+    }
+
+    # Optional: Explicit location block for /index (serves /var/www/html/index.html)
+    location /index {
+        try_files /index.html =404;
+    }
+
+    # Error pages (optional but good practice)
+    error_page 404 /404.html;
+    location = /404.html {
+        internal;
+    }
+
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        internal;
+    }
+}
