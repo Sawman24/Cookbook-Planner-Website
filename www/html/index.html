@@ -4,71 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome Home, My Love!</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@700&family=Caveat:wght@600&display=swap" rel="stylesheet">
     <style>
-        /* --- Variables for Easy Theming --- */
         :root {
-            /* Light Mode Colors */
-            --primary-pink: #FF6B81; /* A vibrant, lovely pink */
-            --light-pink: #FFE8EE;    /* Very light, almost white pink */
-            --accent-pink: #F7CAC9;    /* Slightly deeper light pink */
-            --text-color: #333333;    /* Dark gray for readability */
+            --primary-pink: #FF6B81;
+            --light-pink: #FFE8EE;
+            --accent-pink: #F7CAC9;
+            --text-color: #333333;
             --background-color: #FFFFFF;
             --card-background: #FDFDFD;
             --border-color: #E0E0E0;
             --button-hover: #E85B70;
-
-            /* Floral Pattern (subtle, you can replace with your own image) */
+            --sticky-yellow: #FFF9C4;
+            --sticky-text: #5D4037;
+            --sticky-pink: #FCE4EC;
+            --sticky-blue: #E1F5FE;
             --floral-pattern: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><circle cx="20" cy="20" r="5" fill="%23fcc" /><circle cx="80" cy="80" r="5" fill="%23fcc" /><circle cx="20" cy="80" r="5" fill="%23fcc" /><circle cx="80" cy="20" r="5" fill="%23fcc" /></svg>');
-            /* This is a very simple, abstract floral pattern in SVG. You might want to use a real, subtle floral PNG/SVG if you find one! */
         }
 
-        /* --- Dark Mode Variables --- */
         body.dark-mode {
-            --primary-pink: #FE9BA3; /* Slightly darker pink for dark mode contrast */
-            --light-pink: #29517A;   /* Dark navy/slate accent background */
-            --accent-pink: #5C4B5F;  /* Darker accent for elements */
-            --text-color: #F0F0F0;   /* Light gray text */
+            --primary-pink: #FE9BA3;
+            --light-pink: #29517A;
+            --accent-pink: #5C4B5F;
+            --text-color: #F0F0F0;
             --background-color: #172D44;
             --card-background: #203F5F;
             --border-color: #55445B;
             --button-hover: #D04A5D;
+            --sticky-yellow: #3E3B27;
+            --sticky-text: #FFF9C4;
+            --sticky-pink: #4A2B3E;
+            --sticky-blue: #233D54;
             --floral-pattern: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><circle cx="20" cy="20" r="5" fill="%234A3C4D" /><circle cx="80" cy="80" r="5" fill="%234A3C4D" /><circle cx="20" cy="80" r="5" fill="%234A3C4D" /><circle cx="80" cy="20" r="5" fill="%234A3C4D" /></svg>');
         }
 
-        /* --- Base Styles --- */
         body {
-            font-family: 'Open Sans', 'Arial', sans-serif; /* A slightly softer font */
+            font-family: 'Open Sans', 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             background-color: var(--background-color);
             color: var(--text-color);
             line-height: 1.6;
-            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth dark mode transition */
+            transition: background-color 0.3s ease, color 0.3s ease;
             background-image: var(--floral-pattern);
             background-repeat: repeat;
-            background-size: 80px; /* Adjust size of pattern */
+            background-size: 80px;
         }
 
         h1, h2, h3, h4, h5, h6 {
             color: var(--primary-pink);
-            font-family: 'Playfair Display', serif; /* A more elegant font for headings */
+            font-family: 'Playfair Display', serif;
             margin-top: 0;
             margin-bottom: 0.5em;
         }
 
-        /* --- Header & Navigation --- */
         header {
             background-color: var(--primary-pink);
             color: white;
             padding: 1em 0;
             text-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative; /* For positioning the theme switch */
+            position: relative;
         }
 
         header h1 {
-            color: white; /* Ensure heading is white in header */
+            color: white;
             margin-bottom: 0.5em;
         }
 
@@ -79,26 +79,27 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
+            gap: 8px;
         }
 
         nav ul li {
-            margin: 0 15px;
+            margin: 0 5px;
         }
 
         nav a {
             color: white;
             text-decoration: none;
-            padding: 8px 15px;
+            padding: 8px 16px;
             display: block;
-            border-radius: 20px; /* Softer button look */
+            border-radius: 20px;
+            font-weight: 600;
             transition: background-color 0.3s ease;
         }
 
-        nav a:hover {
+        nav a:hover, nav a.active {
             background-color: var(--button-hover);
         }
 
-        /* --- Dark Mode Toggle Switch --- */
         .theme-switch-wrapper {
             position: absolute;
             top: 15px;
@@ -106,7 +107,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            color: white; /* Text color for the switch label */
+            color: white;
             font-size: 0.9em;
         }
 
@@ -153,14 +154,13 @@
             transform: translateX(24px);
         }
 
-        /* --- Main Content Area --- */
         main {
             padding: 24px;
             max-width: 1100px;
             margin: 30px auto;
             background-color: var(--card-background);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08); /* Softer shadow */
-            border-radius: 12px; /* More rounded corners */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-radius: 12px;
             box-sizing: border-box;
         }
 
@@ -172,258 +172,325 @@
             font-size: 0.9em;
         }
 
-        /* --- Section Specifics --- */
-        .hero {
-            text-align: center;
-            padding: 40px 20px;
-            background-color: var(--light-pink);
-            border-radius: 8px;
+        /* Greeting & Hero Banner */
+        .greeting-card {
+            background: linear-gradient(135deg, var(--light-pink) 0%, var(--card-background) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px 30px;
             margin-bottom: 30px;
-            color: var(--primary-pink); /* Text in hero section */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .hero p {
-            font-size: 1.1em;
-            max-width: 600px;
-            margin: 0 auto;
+        .greeting-text h2 {
+            margin: 0 0 6px 0;
+            font-size: 1.8em;
         }
 
-        /* New: Meal Planner section on homepage */
-        .meal-summary {
-            margin-top: 40px;
-            text-align: center;
-            padding: 24px;
-            background-color: var(--light-pink);
-            border-radius: 10px;
-            color: var(--primary-pink);
-            box-sizing: border-box;
-        }
-
-        .meal-summary h2 {
-            margin-bottom: 20px;
-            color: var(--primary-pink);
-        }
-
-        .meal-cards-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        .meal-day-card {
-            background-color: var(--card-background);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 18px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            text-align: left;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-sizing: border-box;
-            min-width: 0;
-        }
-
-        .meal-day-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .meal-day-card h3 {
-            color: var(--primary-pink);
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-
-        .meal-day-card p {
-            margin: 5px 0;
-            font-size: 0.9em;
+        .greeting-text p {
+            margin: 0;
             color: var(--text-color);
+            font-size: 1.05em;
         }
 
-        .meal-day-card p strong {
-            color: var(--primary-pink);
-        }
-
-        /* Camera Page (styles included but not directly used on index.html) */
-        .camera-container {
-            text-align: center;
-        }
-
-        iframe {
-            width: 100%;
-            max-width: 800px;
-            height: 400px;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            margin-top: 15px;
-            background-color: #000; /* Dark background for camera feed */
-        }
-
-        /* Recipe Form (styles included but not directly used on index.html) */
-        .recipe-form {
-            padding: 25px;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            margin-bottom: 30px;
-            background-color: var(--card-background);
-        }
-
-        .recipe-form h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .recipe-form label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: var(--primary-pink);
-        }
-
-        .recipe-form input[type="text"],
-        .recipe-form textarea {
-            width: calc(100% - 22px); /* Account for padding and border */
-            padding: 11px;
-            margin-bottom: 18px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 1em;
-            background-color: var(--background-color); /* Matches body or card background */
-            color: var(--text-color);
-            transition: border-color 0.3s ease;
-        }
-
-        .recipe-form input[type="text"]:focus,
-        .recipe-form textarea:focus {
-            border-color: var(--primary-pink);
-            outline: none;
-        }
-
-        .recipe-form button {
+        .live-date-pill {
             background-color: var(--primary-pink);
             color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 25px; /* Pill-shaped button */
-            cursor: pointer;
-            font-size: 1.1em;
-            font-weight: bold;
-            display: block;
-            width: fit-content;
-            margin: 0 auto;
-            transition: background-color 0.3s ease;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95em;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
 
-        .recipe-form button:hover {
-            background-color: var(--button-hover);
-            transform: translateY(-2px); /* Slight lift effect */
-        }
-
-        /* Recipe Cards (styles included but not directly used on index.html) */
-        .recipe-list {
+        /* Two Column Hub: Upcoming Meals & Interactive Grocery List */
+        .hub-grid {
             display: grid;
-            gap: 25px; /* Spacing between cards */
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
         }
 
-        .recipe-card {
+        @media (max-width: 850px) {
+            .hub-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section-box {
             background-color: var(--card-background);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 12px;
+            padding: 22px;
+            box-sizing: border-box;
+        }
+
+        .section-box h2 {
+            border-bottom: 2px solid var(--light-pink);
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
             display: flex;
-            flex-direction: column; /* Stack content inside card */
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .recipe-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-        }
-
-        .recipe-card h3 {
-            color: var(--primary-pink);
-            margin-bottom: 10px;
-            font-size: 1.3em;
-        }
-
-        .recipe-card h4 {
-            color: var(--primary-pink);
-            margin-top: 15px;
-            margin-bottom: 5px;
-            font-size: 1em;
-        }
-
-        .recipe-card pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            background-color: var(--background-color); /* Lighter background for code/text blocks */
-            padding: 12px;
-            border-radius: 6px;
+        /* Upcoming Meals Mini Cards */
+        .meal-mini-card {
+            background-color: var(--background-color);
             border: 1px solid var(--border-color);
-            font-size: 0.95em;
-            color: var(--text-color);
-            flex-grow: 1; /* Allow content to grow and push delete button down */
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            transition: transform 0.2s;
         }
 
-        .recipe-card button.delete-btn {
-            background-color: #DC3545; /* Standard red for delete */
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
+        .meal-mini-card:hover {
+            transform: translateX(4px);
+        }
+
+        .meal-mini-card h4 {
+            color: var(--primary-pink);
+            margin: 0 0 6px 0;
+            font-size: 1.05em;
+        }
+
+        .meal-mini-card p {
+            margin: 3px 0;
             font-size: 0.9em;
-            margin-top: 15px;
-            align-self: flex-end; /* Align button to the right */
-            transition: background-color 0.3s ease;
         }
 
-        .recipe-card button.delete-btn:hover {
-            background-color: #C82333;
+        /* Grocery List Interactive Panel */
+        .grocery-input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
-        /* --- Responsive Design (Media Queries) --- */
+        .grocery-input-row input {
+            flex: 1;
+            padding: 9px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95em;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .grocery-input-row button {
+            background-color: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .grocery-items-list {
+            max-height: 280px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--background-color);
+            padding: 8px;
+        }
+
+        .grocery-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95em;
+        }
+
+        .grocery-item:last-child {
+            border-bottom: none;
+        }
+
+        .grocery-item.checked span {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .grocery-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            flex-grow: 1;
+        }
+
+        .grocery-item-left input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-pink);
+            cursor: pointer;
+        }
+
+        .grocery-del-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 0 4px;
+        }
+
+        .grocery-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+
+        .btn-clear-groceries {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 4px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
+        /* --- Shared Love / Sticky Notes Board --- */
+        .stickies-section {
+            margin-top: 30px;
+            background-color: var(--light-pink);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .stickies-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stickies-header h2 {
+            margin: 0;
+            color: var(--primary-pink);
+            font-size: 1.5em;
+        }
+
+        .sticky-form {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .sticky-form input[type="text"] {
+            flex: 1 1 280px;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1em;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .sticky-form select {
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .sticky-form button {
+            background-color: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .stickies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .sticky-note {
+            background-color: var(--sticky-yellow);
+            color: var(--sticky-text);
+            padding: 18px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transform: rotate(-1deg);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 120px;
+            font-family: 'Caveat', cursive, sans-serif;
+            font-size: 1.35em;
+            line-height: 1.3;
+        }
+
+        .sticky-note:nth-child(even) {
+            background-color: var(--sticky-pink);
+            transform: rotate(1.5deg);
+        }
+
+        .sticky-note:nth-child(3n) {
+            background-color: var(--sticky-blue);
+            transform: rotate(-2deg);
+        }
+
+        .sticky-note:hover {
+            transform: scale(1.05) rotate(0deg);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+            z-index: 5;
+        }
+
+        .sticky-author {
+            margin-top: auto;
+            padding-top: 10px;
+            font-size: 0.85em;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            color: var(--primary-pink);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sticky-del-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 0;
+            line-height: 1;
+        }
+
         @media (max-width: 768px) {
-            header {
-                padding: 0.8em 0;
-            }
-
             nav ul {
                 flex-direction: column;
                 gap: 5px;
             }
-
-            nav ul li {
-                margin: 0;
-            }
-
-            nav a {
-                padding: 6px 12px;
-                font-size: 0.9em;
-            }
-
-            main {
-                margin: 20px auto;
-                padding: 15px;
-            }
-
             .theme-switch-wrapper {
-                position: static; /* Move switch below nav on small screens */
+                position: static;
                 justify-content: center;
                 margin-top: 10px;
-                color: var(--text-color); /* Adjust color for dark mode */
-            }
-
-            .meal-cards-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .meal-day-card {
-                width: 90%; /* Adjust width for smaller screens */
             }
         }
     </style>
@@ -440,7 +507,7 @@
         <h1>Welcome Home, My Love!</h1>
         <nav>
             <ul>
-                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html" class="active">Home</a></li>
                 <li><a href="recipes.html">My Recipes</a></li>
                 <li><a href="planner.html">Planner</a></li>
             </ul>
@@ -448,18 +515,57 @@
     </header>
 
     <main>
-        <section class="hero">
-            <p>So glad you're here! This little corner of the internet is just for you.</p>
-            <p>Feel free to explore your recipes, check the camera feed, or plan out your days!</p>
-        </section>
+        <div class="greeting-card">
+            <div class="greeting-text">
+                <h2 id="greetingTitle">Good Day, Michaela! ✨</h2>
+                <p>Welcome to your personal recipe box and life dashboard.</p>
+            </div>
+            <div class="live-date-pill" id="liveDatePill">Today</div>
+        </div>
 
-        <section class="meal-summary">
-            <h2>Upcoming Meals</h2>
-            <div id="upcomingMealsContainer" class="meal-cards-container">
-                <p>Loading upcoming meals...</p>
+        <div class="hub-grid">
+            <!-- Left: Upcoming Meals -->
+            <section class="section-box">
+                <h2>🍽️ Upcoming Meals <a href="planner.html" style="font-size:0.7em; color:var(--primary-pink); text-decoration:none; font-family:'Open Sans'; font-weight:600;">Open Planner &rarr;</a></h2>
+                <div id="upcomingMealsContainer">
+                    <p>Loading upcoming meals...</p>
+                </div>
+            </section>
+
+            <!-- Right: Interactive Grocery Checklist -->
+            <section class="section-box">
+                <h2>🛒 Grocery Checklist</h2>
+                <div class="grocery-input-row">
+                    <input type="text" id="groceryInput" placeholder="Add item (e.g. Oat Milk, Strawberries)...">
+                    <button id="addGroceryBtn">+ Add</button>
+                </div>
+                <div class="grocery-items-list" id="groceryItemsList">
+                    <p style="padding: 10px; color:#888;">No grocery items yet.</p>
+                </div>
+                <div class="grocery-footer">
+                    <span id="groceryCount">0 items</span>
+                    <button class="btn-clear-groceries" id="clearCheckedGroceriesBtn">Clear Checked</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Sticky Notes & Sweet Messages Board -->
+        <section class="stickies-section">
+            <div class="stickies-header">
+                <h2>💌 Shared Sweet Notes & Reminders</h2>
+            </div>
+            <form class="sticky-form" id="stickyForm">
+                <input type="text" id="stickyContent" placeholder="Leave a sweet note or quick reminder..." required>
+                <select id="stickyAuthor">
+                    <option value="Sawyer 💖">Sawyer 💖</option>
+                    <option value="Michaela 🌸">Michaela 🌸</option>
+                </select>
+                <button type="submit">Post Note</button>
+            </form>
+            <div class="stickies-grid" id="stickiesContainer">
+                <p>Loading sweet notes...</p>
             </div>
         </section>
-
     </main>
 
     <footer>
@@ -468,18 +574,14 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Dark Mode Logic ---
+            // Dark Mode
             const themeSwitch = document.getElementById('checkbox');
             const currentTheme = localStorage.getItem('theme');
-
             if (currentTheme) {
                 document.body.classList.add(currentTheme);
-                if (currentTheme === 'dark-mode') {
-                    themeSwitch.checked = true;
-                }
+                if (currentTheme === 'dark-mode' && themeSwitch) themeSwitch.checked = true;
             }
-
-            if (themeSwitch) { // Ensure the switch exists before adding listener
+            if (themeSwitch) {
                 themeSwitch.addEventListener('change', function() {
                     if (this.checked) {
                         document.body.classList.add('dark-mode');
@@ -490,206 +592,219 @@
                     }
                 });
             }
-            // --- End Dark Mode Logic ---
 
-            // --- Recipe related functions (UPDATED to use API, but still only relevant for recipes.html) ---
-            // These functions will primarily be used on recipes.html, but the core logic is here
-            // Note: recipesContainer and addRecipeForm will likely be null on index.html
-            // as those elements are expected to be on recipes.html.
-            const recipesContainer = document.getElementById('recipesContainer');
-            const addRecipeForm = document.getElementById('addRecipeForm');
+            // Live Greeting & Date
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting = "Good morning, Michaela! ☀️";
+            if (hour >= 12 && hour < 17) greeting = "Good afternoon, Michaela! 🌸";
+            else if (hour >= 17) greeting = "Good evening, Michaela! 🌙";
+            document.getElementById('greetingTitle').textContent = greeting;
+            document.getElementById('liveDatePill').textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
-            async function fetchRecipes() {
-                try {
-                    const response = await fetch('/api/recipes'); // Use /api/recipes as defined in Flask
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    return data;
-                } catch (error) {
-                    console.error('Error fetching recipes:', error);
-                    return []; // Return empty array on error
-                }
-            }
-
-            // This function is generally not needed if addRecipe/deleteRecipe hit API directly
-            // Keeping for completeness if future "save all" is desired.
-            async function saveRecipes(recipesArray) {
-                try {
-                    const response = await fetch('/api/recipes', {
-                        method: 'POST', // Flask POST for adding/overwriting all recipes
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(recipesArray) // Flask expects the whole array for full save
-                    });
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const data = await response.json();
-                    console.log(data.message);
-                } catch (error) {
-                    console.error('Error saving recipes:', error);
-                }
-            }
-
-            async function addRecipe(title, ingredients, instructions) {
-                const newRecipe = { title, ingredients, instructions };
-                try {
-                    const response = await fetch('/api/recipes', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(newRecipe)
-                    });
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const result = await response.json();
-                    console.log(result.message);
-                    // Re-fetch and display all recipes after adding one if on recipes.html
-                    if (recipesContainer) {
-                        displayRecipes();
-                    }
-                } catch (error) {
-                    console.error('Error adding recipe:', error);
-                    alert('Failed to add recipe.');
-                }
-            }
-
-            async function deleteRecipe(recipeId) {
-                try {
-                    const response = await fetch(`/api/recipes/${recipeId}`, {
-                        method: 'DELETE'
-                    });
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const result = await response.json();
-                    console.log(result.message);
-                    // Re-fetch and display all recipes after deleting one if on recipes.html
-                    if (recipesContainer) {
-                        displayRecipes();
-                    }
-                } catch (error) {
-                    console.error('Error deleting recipe:', error);
-                    alert('Failed to delete recipe.');
-                }
-            }
-
-            // This function needs to be adapted for recipes.html
-            async function displayRecipes() {
-                if (!recipesContainer) return; // Exit if not on recipes page (i.e., if on index.html)
-
-                const recipes = await fetchRecipes();
-                recipesContainer.innerHTML = '';
-                if (recipes.length === 0) {
-                    recipesContainer.innerHTML = '<p>No recipes added yet. Visit <a href="recipes.html">My Recipes</a> to add your first one!</p>';
-                    return;
-                }
-
-                recipes.forEach((recipe) => {
-                    const recipeCard = document.createElement('div');
-                    recipeCard.classList.add('recipe-card');
-                    recipeCard.innerHTML = `
-                        <h3>${recipe.title}</h3>
-                        <h4>Ingredients:</h4>
-                        <pre>${recipe.ingredients}</pre>
-                        <h4>Instructions:</h4>
-                        <pre>${recipe.instructions}</pre>
-                        <button class="delete-btn" data-recipe-id="${recipe.id}">Delete Recipe</button>
-                    `;
-                    recipesContainer.appendChild(recipeCard);
-                });
-
-                document.querySelectorAll('.delete-btn').forEach(button => {
-                    button.addEventListener('click', async (e) => {
-                        const recipeIdToDelete = parseInt(e.target.dataset.recipeId);
-                        const recipeTitle = e.target.closest('.recipe-card')?.querySelector('h3')?.textContent || 'this recipe';
-                        if (confirm(`Are you sure you want to delete "${recipeTitle}"?`)) {
-                            await deleteRecipe(recipeIdToDelete);
-                        }
-                    });
-                });
-            }
-
-            // Add recipe form listener (this will only be present on recipes.html)
-            if (addRecipeForm) {
-                addRecipeForm.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const title = document.getElementById('recipeTitle').value;
-                    const ingredients = document.getElementById('recipeIngredients').value;
-                    const instructions = document.getElementById('recipeInstructions').value;
-
-                    if (title && ingredients && instructions) {
-                        await addRecipe(title, ingredients, instructions);
-                        addRecipeForm.reset();
-                    } else {
-                        alert('Please fill in all fields!');
-                    }
-                });
-                displayRecipes(); // Initial display for recipes.html
-            }
-            // --- End Recipe related functions ---
-
-            // --- Homepage Meal Display Logic (UPDATED to use API) ---
-            const upcomingMealsContainer = document.getElementById('upcomingMealsContainer');
-
-            function getFormattedDate(date) {
-                const options = { weekday: 'long', month: 'long', day: 'numeric' };
-                return date.toLocaleDateString('en-US', options);
-            }
+            // --- Upcoming Meals Logic ---
+            const upcomingContainer = document.getElementById('upcomingMealsContainer');
 
             async function loadUpcomingMeals() {
-                if (!upcomingMealsContainer) return; // Exit if container doesn't exist on this page
-
-                upcomingMealsContainer.innerHTML = '<p>Loading upcoming meals...</p>'; // Show loading state
                 try {
-                    const response = await fetch('/api/planner');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const storedPlannerData = await response.json();
-                    upcomingMealsContainer.innerHTML = ''; // Clear loading state
+                    const res = await fetch('/api/planner');
+                    if (!res.ok) throw new Error('API error');
+                    const data = await res.json();
+                    upcomingContainer.innerHTML = '';
 
                     const today = new Date();
-                    today.setHours(0, 0, 0, 0); // Normalize to start of day
+                    today.setHours(0,0,0,0);
 
-                    let hasMealsPlanned = false;
-                    for (let i = 0; i < 3; i++) {
+                    let renderedCount = 0;
+                    for (let i = 0; i < 4; i++) {
                         const targetDate = new Date(today);
                         targetDate.setDate(today.getDate() + i);
-                        const dateKey = targetDate.toISOString().slice(0, 10); // YYYY-MM-DD format
+                        const dateKey = `${targetDate.getFullYear()}-${String(targetDate.getMonth() + 1).padStart(2, '0')}-${String(targetDate.getDate()).padStart(2, '0')}`;
 
-                        const dayData = storedPlannerData[dateKey] || {};
-                        const meals = dayData.meals || { breakfast: 'Not planned', lunch: 'Not planned', dinner: 'Not planned' };
+                        const dayData = data[dateKey] || {};
+                        const meals = dayData.meals || {};
+                        const b = meals.breakfast || 'Not planned';
+                        const l = meals.lunch || 'Not planned';
+                        const d = meals.dinner || 'Not planned';
 
-                        if (meals.breakfast !== 'Not planned' || meals.lunch !== 'Not planned' || meals.dinner !== 'Not planned') {
-                            hasMealsPlanned = true;
+                        if (b !== 'Not planned' || l !== 'Not planned' || d !== 'Not planned') {
+                            renderedCount++;
+                            const titleStr = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : targetDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                            const card = document.createElement('div');
+                            card.classList.add('meal-mini-card');
+                            card.innerHTML = `
+                                <h4>📅 ${titleStr}</h4>
+                                <p><strong>Breakfast:</strong> ${escapeHtml(b)}</p>
+                                <p><strong>Lunch:</strong> ${escapeHtml(l)}</p>
+                                <p><strong>Dinner:</strong> ${escapeHtml(d)}</p>
+                            `;
+                            upcomingContainer.appendChild(card);
                         }
-
-                        const dayCard = document.createElement('div');
-                        dayCard.classList.add('meal-day-card');
-                        dayCard.innerHTML = `
-                            <h3>${i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : getFormattedDate(targetDate)}</h3>
-                            <p><strong>Breakfast:</strong> ${meals.breakfast || 'Not planned'}</p>
-                            <p><strong>Lunch:</strong> ${meals.lunch || 'Not planned'}</p>
-                            <p><strong>Dinner:</strong> ${meals.dinner || 'Not planned'}</p>
-                        `;
-                        upcomingMealsContainer.appendChild(dayCard);
                     }
 
-                    if (!hasMealsPlanned && upcomingMealsContainer.children.length === 0) {
-                        upcomingMealsContainer.innerHTML = '<p>No meals planned for the upcoming days. Visit the <a href="planner.html">Planner</a> to add some!</p>';
+                    if (renderedCount === 0) {
+                        upcomingContainer.innerHTML = '<p style="padding:10px; color:#888;">No meals planned for the next few days. Visit the <a href="planner.html" style="color:var(--primary-pink);">Planner</a> to schedule some delicious meals!</p>';
                     }
-                } catch (error) {
-                    console.error('Error loading upcoming meals:', error);
-                    upcomingMealsContainer.innerHTML = '<p>Error loading meals. Please try again later.</p>';
+                } catch (e) {
+                    upcomingContainer.innerHTML = '<p style="padding:10px; color:#888;">Could not load meals.</p>';
                 }
             }
 
-            // Call this function when the page loads
+            // --- Grocery List Logic ---
+            const groceryInput = document.getElementById('groceryInput');
+            const addGroceryBtn = document.getElementById('addGroceryBtn');
+            const groceryItemsList = document.getElementById('groceryItemsList');
+            const groceryCount = document.getElementById('groceryCount');
+            const clearCheckedGroceriesBtn = document.getElementById('clearCheckedGroceriesBtn');
+
+            async function loadGroceries() {
+                try {
+                    const res = await fetch('/api/groceries');
+                    if (!res.ok) throw new Error('API error');
+                    const items = await res.json();
+
+                    if (items.length === 0) {
+                        groceryItemsList.innerHTML = '<p style="padding:10px; color:#888; text-align:center;">Your grocery checklist is empty!</p>';
+                        groceryCount.textContent = '0 items';
+                        return;
+                    }
+
+                    groceryCount.textContent = `${items.filter(i => !i.checked).length} remaining / ${items.length} total`;
+                    groceryItemsList.innerHTML = '';
+
+                    items.forEach(item => {
+                        const row = document.createElement('div');
+                        row.classList.add('grocery-item');
+                        if (item.checked) row.classList.add('checked');
+
+                        row.innerHTML = `
+                            <div class="grocery-item-left" data-id="${item.id}">
+                                <input type="checkbox" ${item.checked ? 'checked' : ''} data-id="${item.id}">
+                                <span>${escapeHtml(item.item)}</span>
+                            </div>
+                            <button class="grocery-del-btn" data-del-id="${item.id}">&times;</button>
+                        `;
+                        groceryItemsList.appendChild(row);
+                    });
+
+                    // Toggle checkboxes
+                    groceryItemsList.querySelectorAll('.grocery-item-left').forEach(el => {
+                        el.addEventListener('click', async (e) => {
+                            const id = el.dataset.id;
+                            await fetch(`/api/groceries/${id}/toggle`, { method: 'POST' });
+                            loadGroceries();
+                        });
+                    });
+
+                    // Delete button
+                    groceryItemsList.querySelectorAll('.grocery-del-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            e.stopPropagation();
+                            const id = btn.dataset.delId;
+                            await fetch(`/api/groceries/${id}`, { method: 'DELETE' });
+                            loadGroceries();
+                        });
+                    });
+                } catch (e) {
+                    groceryItemsList.innerHTML = '<p style="padding:10px; color:#888;">Could not load groceries.</p>';
+                }
+            }
+
+            async function addGroceryItem() {
+                const val = groceryInput.value.trim();
+                if (!val) return;
+                try {
+                    const res = await fetch('/api/groceries', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ item: val })
+                    });
+                    if (res.ok) {
+                        groceryInput.value = '';
+                        loadGroceries();
+                    }
+                } catch (e) {}
+            }
+
+            addGroceryBtn.addEventListener('click', addGroceryItem);
+            groceryInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addGroceryItem(); });
+
+            clearCheckedGroceriesBtn.addEventListener('click', async () => {
+                await fetch('/api/groceries/clear-checked', { method: 'POST' });
+                loadGroceries();
+            });
+
+            // --- Sticky Notes Logic ---
+            const stickiesContainer = document.getElementById('stickiesContainer');
+            const stickyForm = document.getElementById('stickyForm');
+            const stickyContent = document.getElementById('stickyContent');
+            const stickyAuthor = document.getElementById('stickyAuthor');
+
+            async function loadStickies() {
+                try {
+                    const res = await fetch('/api/stickies');
+                    if (!res.ok) throw new Error('API error');
+                    const notes = await res.json();
+
+                    if (notes.length === 0) {
+                        stickiesContainer.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 15px; color:#888;">No notes on the board yet. Leave one above! 💕</p>';
+                        return;
+                    }
+
+                    stickiesContainer.innerHTML = '';
+                    notes.forEach(n => {
+                        const noteCard = document.createElement('div');
+                        noteCard.classList.add('sticky-note');
+                        noteCard.innerHTML = `
+                            <div>${escapeHtml(n.content)}</div>
+                            <div class="sticky-author">
+                                <span>— ${escapeHtml(n.author)}</span>
+                                <button class="sticky-del-btn" data-sticky-del="${n.id}" title="Remove note">&times;</button>
+                            </div>
+                        `;
+                        stickiesContainer.appendChild(noteCard);
+                    });
+
+                    stickiesContainer.querySelectorAll('.sticky-del-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            const id = btn.dataset.stickyDel;
+                            await fetch(`/api/stickies/${id}`, { method: 'DELETE' });
+                            loadStickies();
+                        });
+                    });
+                } catch (e) {
+                    stickiesContainer.innerHTML = '<p>Could not load notes.</p>';
+                }
+            }
+
+            stickyForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const content = stickyContent.value.trim();
+                const author = stickyAuthor.value;
+                if (!content) return;
+
+                try {
+                    const res = await fetch('/api/stickies', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content, author })
+                    });
+                    if (res.ok) {
+                        stickyContent.value = '';
+                        loadStickies();
+                    }
+                } catch (e) {}
+            });
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+            }
+
+            // Init all sections
             loadUpcomingMeals();
+            loadGroceries();
+            loadStickies();
         });
     </script>
 </body>
