@@ -958,8 +958,11 @@
                         <select id="recipeCategory">
                             <option value="General">General</option>
                             <option value="Breakfast">Breakfast</option>
-                            <option value="Lunch">Lunch</option>
-                            <option value="Dinner">Dinner</option>
+                            <option value="Mains & Entrees">Mains & Entrees</option>
+                            <option value="Soup">Soup</option>
+                            <option value="Sandwich">Sandwich</option>
+                            <option value="Salad">Salad</option>
+                            <option value="Pasta">Pasta</option>
                             <option value="Side Dish">Side Dish</option>
                             <option value="Sauce">Sauce</option>
                             <option value="Dressing">Dressing</option>
@@ -991,8 +994,11 @@
                 <button class="category-btn active" data-category="All">All</button>
                 <button class="category-btn" data-category="Favorites">⭐ Favorites</button>
                 <button class="category-btn" data-category="Breakfast">Breakfast</button>
-                <button class="category-btn" data-category="Lunch">Lunch</button>
-                <button class="category-btn" data-category="Dinner">Dinner</button>
+                <button class="category-btn" data-category="Mains & Entrees">Mains</button>
+                <button class="category-btn" data-category="Soup">Soup</button>
+                <button class="category-btn" data-category="Sandwich">Sandwich</button>
+                <button class="category-btn" data-category="Salad">Salad</button>
+                <button class="category-btn" data-category="Pasta">Pasta</button>
                 <button class="category-btn" data-category="Side Dish">Side Dish</button>
                 <button class="category-btn" data-category="Sauce">Sauce</button>
                 <button class="category-btn" data-category="Dressing">Dressing</button>
@@ -1103,8 +1109,11 @@
                 <select id="editRecipeCategory" style="width:100%; padding:10px; margin-bottom:12px; border:1px solid var(--border-color); border-radius:6px; background:var(--background-color); color:var(--text-color); box-sizing:border-box;">
                     <option value="General">General</option>
                     <option value="Breakfast">Breakfast</option>
-                    <option value="Lunch">Lunch</option>
-                    <option value="Dinner">Dinner</option>
+                    <option value="Mains & Entrees">Mains & Entrees</option>
+                    <option value="Soup">Soup</option>
+                    <option value="Sandwich">Sandwich</option>
+                    <option value="Salad">Salad</option>
+                    <option value="Pasta">Pasta</option>
                     <option value="Side Dish">Side Dish</option>
                     <option value="Sauce">Sauce</option>
                     <option value="Dressing">Dressing</option>
@@ -1238,6 +1247,9 @@
                     if (!matchesSearch) return false;
                     if (activeCategory === 'All') return true;
                     if (activeCategory === 'Favorites') return r.is_favorite;
+                    if (activeCategory === 'Mains & Entrees') {
+                        return r.category === 'Mains & Entrees' || r.category === 'Lunch' || r.category === 'Dinner' || r.category === 'Main' || r.category === 'Entree';
+                    }
                     return r.category === activeCategory;
                 });
 
