@@ -56,7 +56,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS stickies (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             content TEXT NOT NULL,
-            author TEXT DEFAULT 'Sawyer',
+            author TEXT DEFAULT 'Note',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
@@ -396,7 +396,7 @@ def get_stickies():
 def add_sticky():
     data = request.get_json() or {}
     content = data.get('content', '').strip()
-    author = data.get('author', 'Sawyer').strip() or 'Sawyer'
+    author = data.get('author', '').strip() or 'Note'
     if not content:
         return jsonify({'error': 'Content is required'}), 400
 

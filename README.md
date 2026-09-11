@@ -6,8 +6,9 @@ A clean virtual Recipe Box and Daily Meal Planner web application with a Flask R
 
 ## 🚀 Features
 
-- **Recipe Box**: Browse, add, search, and delete recipes with real-time SQLite persistence.
-- **Daily Planner**: Interactive calendar with meal planning (Breakfast, Lunch, Dinner), daily tasks, and notes.
+- **Recipe Box & Cook Mode**: Browse, add, search, and delete recipes with interactive Step-by-Step Cook Mode, Focus Mode, ingredient checklists, scalable timers, and screen Wake Lock.
+- **Daily Planner & Task Bar**: Interactive monthly calendar with meal planning, daily tasks, sticky notes, and a synchronized to-do task bar directly on the homepage.
+- **Categorized Recipes**: 13+ recipe categories (Mains, Soups, Sandwiches, Salads, Pasta, Sides, Sauces, Dressings, Appetizers, Desserts, Bread & Baking, etc.).
 - **Dark Mode**: Built-in toggle with local preference retention.
 - **Dockerized**: Preconfigured with `docker-compose.yml` for single-click deployment via **Portainer** or Docker CLI.
 - **Persistent Data**: Database volume ensures recipes and meal plans persist across container updates.
@@ -21,7 +22,7 @@ A clean virtual Recipe Box and Daily Meal Planner web application with a Flask R
 3. Name your stack (e.g. `recipes-app`).
 4. Choose **Repository** or **Web editor**:
    - **Repository option**:
-     - Repository URL: `https://github.com/Sawman24/website1`
+     - Repository URL: `https://github.com/Sawman24/Cookbook-Planner-Website`
      - Repository reference: `refs/heads/main`
      - Compose path: `docker-compose.yml`
    - **Web Editor option**: Paste the contents of `docker-compose.yml`.
@@ -35,8 +36,8 @@ A clean virtual Recipe Box and Daily Meal Planner web application with a Flask R
 
 ```bash
 # Clone the repository
-git clone https://github.com/Sawman24/website1.git
-cd website1
+git clone https://github.com/Sawman24/Cookbook-Planner-Website.git
+cd Cookbook-Planner-Website
 
 # Start the stack
 docker compose up -d --build

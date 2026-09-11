@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome Home, My Love!</title>
+    <title>Virtual Recipe Box & Planner</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@700&family=Caveat:wght@600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -663,7 +663,7 @@
             </label>
             <em>Enable Dark Mode!</em>
         </div>
-        <h1>Welcome Home, My Love!</h1>
+        <h1>Virtual Recipe Box & Planner</h1>
         <nav>
             <ul>
                 <li><a href="index.html" class="active">Home</a></li>
@@ -676,8 +676,8 @@
     <main>
         <div class="greeting-card">
             <div class="greeting-text">
-                <h2 id="greetingTitle">Good Day, Michaela! ✨</h2>
-                <p>Welcome to your personal recipe box and life dashboard.</p>
+                <h2 id="greetingTitle">Good Day! ✨</h2>
+                <p>Welcome to your personal recipe box and daily planner.</p>
             </div>
             <div class="live-date-pill" id="liveDatePill">Today</div>
         </div>
@@ -732,17 +732,14 @@
             </section>
         </div>
 
-        <!-- Sticky Notes & Sweet Messages Board -->
+        <!-- Sticky Notes Board -->
         <section class="stickies-section">
             <div class="stickies-header">
-                <h2>💌 Shared Sweet Notes & Reminders</h2>
+                <h2>💌 Shared Notes & Reminders</h2>
             </div>
             <form class="sticky-form" id="stickyForm">
-                <input type="text" id="stickyContent" placeholder="Leave a sweet note or quick reminder..." required>
-                <select id="stickyAuthor">
-                    <option value="Sawyer 💖">Sawyer 💖</option>
-                    <option value="Michaela 🌸">Michaela 🌸</option>
-                </select>
+                <input type="text" id="stickyContent" placeholder="Leave a note or quick reminder..." required>
+                <input type="text" id="stickyAuthor" placeholder="Name (optional)" style="padding:10px 14px; border:1px solid var(--border-color); border-radius:8px; background-color:var(--background-color); color:var(--text-color); font-weight:600; flex:0 1 180px;">
                 <button type="submit">Post Note</button>
             </form>
             <div class="stickies-grid" id="stickiesContainer">
@@ -752,7 +749,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 Sawyer Tobin (for My Lovely Girlfriend)</p>
+        <p>&copy; 2025 Virtual Recipe Box & Planner</p>
     </footer>
 
     <script>
@@ -779,9 +776,9 @@
             // Live Greeting & Date
             const now = new Date();
             const hour = now.getHours();
-            let greeting = "Good morning, Michaela! ☀️";
-            if (hour >= 12 && hour < 17) greeting = "Good afternoon, Michaela! 🌸";
-            else if (hour >= 17) greeting = "Good evening, Michaela! 🌙";
+            let greeting = "Good morning! ☀️";
+            if (hour >= 12 && hour < 17) greeting = "Good afternoon! 🌸";
+            else if (hour >= 17) greeting = "Good evening! 🌙";
             document.getElementById('greetingTitle').textContent = greeting;
             document.getElementById('liveDatePill').textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
@@ -963,7 +960,7 @@
             stickyForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const content = stickyContent.value.trim();
-                const author = stickyAuthor.value;
+                const author = (stickyAuthor.value || '').trim() || 'Note';
                 if (!content) return;
 
                 try {
