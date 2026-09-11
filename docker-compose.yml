@@ -5,7 +5,6 @@ services:
     build:
       context: ./recipe_api
       dockerfile: Dockerfile
-    container_name: recipe_api
     restart: unless-stopped
     environment:
       - DATABASE_PATH=/app/data/recipes.db
@@ -18,7 +17,6 @@ services:
     build:
       context: .
       dockerfile: nginx/Dockerfile
-    container_name: recipe_web
     restart: unless-stopped
     ports:
       - "${PORT:-5050}:80"
@@ -29,8 +27,6 @@ services:
 
 volumes:
   recipe_data:
-    name: recipe_data
 
 networks:
   recipe_net:
-    driver: bridge
