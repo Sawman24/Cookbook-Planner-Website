@@ -627,6 +627,29 @@
                 return `${y}-${m}-${d}`;
             }
 
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+            }
+
+            function parseTasksString(str) {
+                if (!str) return [];
+                return str.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
+                    let done = false;
+                    let text = line;
+                    if (/^\[x\]\s*/i.test(line) || /^-\s*\[x\]\s*/i.test(line) || /^✓\s*/.test(line)) {
+                        done = true;
+                        text = line.replace(/^(?:-\s*)?(?:\[x\]|✓)\s*/i, '');
+                    } else if (/^\[\s*\]\s*/.test(line) || /^-\s*\[\s*\]\s*/.test(line)) {
+                        done = false;
+                        text = line.replace(/^(?:-\s*)?\[\s*\]\s*/, '');
+                    } else if (/^[-*•]\s*/.test(line)) {
+                        text = line.replace(/^[-*•]\s*/, '');
+                    }
+                    return { text: text.trim(), done };
+                });
+            }
+
             function populateMealSelect(selectElement, customInputElement, selectedMeal, recipes) {
                 selectElement.innerHTML = '';
 
@@ -718,15 +741,25 @@
                         if (dayData.meals.lunch && dayData.meals.lunch !== 'Not planned') mealsSummary.push(`L: ${dayData.meals.lunch}`);
                         if (dayData.meals.dinner && dayData.meals.dinner !== 'Not planned') mealsSummary.push(`D: ${dayData.meals.dinner}`);
                     }
-                    let tasksSummary = dayData.tasks ? dayData.tasks.split('\n')[0] : '';
+                    
+                    let taskList = parseTasksString(dayData.tasks || '');
+                    let tasksSummary = '';
+                    if (taskList.length > 0) {
+                        let doneCount = taskList.filter(t => t.done).length;
+                        tasksSummary = `${doneCount}/${taskList.length} done`;
+                        if (taskList[0] && taskList[0].text) {
+                            tasksSummary += `: ${taskList[0].text}`;
+                        }
+                    }
+                    
                     let notesSummary = dayData.notes ? dayData.notes.split('\n')[0] : '';
 
                     dayCell.innerHTML = `
                         <div class="day-number">${i}</div>
                         <div class="day-content">
                             ${mealsSummary.length > 0 ? `<p style="font-weight:600;">${mealsSummary.join(', ')}</p>` : ''}
-                            ${tasksSummary ? `<p>✓ ${tasksSummary}</p>` : ''}
-                            ${notesSummary ? `<p>💬 ${notesSummary}</p>` : ''}
+                            ${tasksSummary ? `<p style="${taskList.length > 0 && taskList.every(t => t.done) ? 'text-decoration:line-through; opacity:0.6;' : ''}">✓ ${escapeHtml(tasksSummary)}</p>` : ''}
+                            ${notesSummary ? `<p>💬 ${escapeHtml(notesSummary)}</p>` : ''}
                         </div>
                     `;
                     calendarGrid.appendChild(dayCell);

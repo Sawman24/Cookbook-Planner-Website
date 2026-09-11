@@ -261,16 +261,33 @@ def get_planner_day(date_key):
 @app.route('/api/planner/<date_key>', methods=['POST', 'PUT'])
 def save_planner_day(date_key):
     data = request.get_json() or {}
-    meals = data.get('meals', {})
-    breakfast = meals.get('breakfast', 'Not planned')
-    lunch = meals.get('lunch', 'Not planned')
-    dinner = meals.get('dinner', 'Not planned')
-    tasks = data.get('tasks', '')
-    notes = data.get('notes', '')
-
+    
     conn = get_db_connection()
     cursor = conn.cursor()
+    
     try:
+        existing = cursor.execute('SELECT * FROM planner WHERE date_key = ?', (date_key,)).fetchone()
+        
+        # Determine meals
+        existing_breakfast = existing['breakfast'] if existing else 'Not planned'
+        existing_lunch = existing['lunch'] if existing else 'Not planned'
+        existing_dinner = existing['dinner'] if existing else 'Not planned'
+        existing_tasks = existing['tasks'] if existing else ''
+        existing_notes = existing['notes'] if existing else ''
+        
+        if 'meals' in data:
+            meals = data.get('meals') or {}
+            breakfast = meals.get('breakfast', existing_breakfast)
+            lunch = meals.get('lunch', existing_lunch)
+            dinner = meals.get('dinner', existing_dinner)
+        else:
+            breakfast = data.get('breakfast', existing_breakfast)
+            lunch = data.get('lunch', existing_lunch)
+            dinner = data.get('dinner', existing_dinner)
+            
+        tasks = data.get('tasks', existing_tasks)
+        notes = data.get('notes', existing_notes)
+
         cursor.execute('''
             INSERT INTO planner (date_key, breakfast, lunch, dinner, tasks, notes)
             VALUES (?, ?, ?, ?, ?, ?)

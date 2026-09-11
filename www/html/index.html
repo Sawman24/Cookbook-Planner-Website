@@ -207,18 +207,12 @@
             box-shadow: 0 3px 8px rgba(0,0,0,0.1);
         }
 
-        /* Two Column Hub: Upcoming Meals & Interactive Grocery List */
+        /* Three Column Hub: Upcoming Meals, Daily Tasks & Interactive Grocery List */
         .hub-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 22px;
             margin-bottom: 30px;
-        }
-
-        @media (max-width: 850px) {
-            .hub-grid {
-                grid-template-columns: 1fr;
-            }
         }
 
         .section-box {
@@ -227,6 +221,171 @@
             border-radius: 12px;
             padding: 22px;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Daily Tasks Interactive Card */
+        .tasks-day-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--light-pink);
+            border-radius: 8px;
+            padding: 6px 12px;
+            margin-bottom: 12px;
+        }
+
+        .tasks-nav-btn {
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+        }
+
+        .tasks-nav-btn:hover {
+            background: var(--button-hover);
+        }
+
+        .tasks-date-label {
+            font-weight: 700;
+            font-size: 0.9em;
+            color: var(--primary-pink);
+        }
+
+        .task-input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .task-input-row input {
+            flex: 1;
+            padding: 9px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95em;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .task-input-row button {
+            background-color: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .task-input-row button:hover {
+            background-color: var(--button-hover);
+        }
+
+        .tasks-items-list {
+            max-height: 260px;
+            min-height: 120px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--background-color);
+            padding: 6px;
+            flex-grow: 1;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95em;
+            transition: background-color 0.2s;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-item.done span {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .task-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .task-item-left span {
+            word-break: break-word;
+        }
+
+        .task-item-left input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-pink);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .task-del-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 0 4px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .task-del-btn:hover {
+            opacity: 1;
+        }
+
+        .tasks-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+
+        .tasks-progress-badge {
+            font-weight: 600;
+            color: var(--primary-pink);
+        }
+
+        .btn-clear-tasks {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 4px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .btn-clear-tasks:hover {
+            border-color: var(--primary-pink);
+            color: var(--primary-pink);
         }
 
         .section-box h2 {
@@ -524,7 +683,7 @@
         </div>
 
         <div class="hub-grid">
-            <!-- Left: Upcoming Meals -->
+            <!-- 1. Upcoming Meals -->
             <section class="section-box">
                 <h2>🍽️ Upcoming Meals <a href="planner.html" style="font-size:0.7em; color:var(--primary-pink); text-decoration:none; font-family:'Open Sans'; font-weight:600;">Open Planner &rarr;</a></h2>
                 <div id="upcomingMealsContainer">
@@ -532,7 +691,31 @@
                 </div>
             </section>
 
-            <!-- Right: Interactive Grocery Checklist -->
+            <!-- 2. Daily Tasks & To-Do Checklist -->
+            <section class="section-box">
+                <h2>
+                    <span>✅ Daily Tasks</span>
+                    <a href="planner.html" style="font-size:0.7em; color:var(--primary-pink); text-decoration:none; font-family:'Open Sans'; font-weight:600;">Planner &rarr;</a>
+                </h2>
+                <div class="tasks-day-bar">
+                    <button class="tasks-nav-btn" id="prevTaskDayBtn" title="Previous Day">&larr;</button>
+                    <span class="tasks-date-label" id="tasksCurrentDayLabel">Today</span>
+                    <button class="tasks-nav-btn" id="nextTaskDayBtn" title="Next Day">&rarr;</button>
+                </div>
+                <div class="task-input-row">
+                    <input type="text" id="taskInput" placeholder="Add task for this day...">
+                    <button id="addTaskBtn">+ Add</button>
+                </div>
+                <div class="tasks-items-list" id="tasksItemsList">
+                    <p style="padding: 10px; color:#888; text-align:center;">Loading tasks...</p>
+                </div>
+                <div class="tasks-footer">
+                    <span id="tasksProgressBadge" class="tasks-progress-badge">0 / 0 done</span>
+                    <button class="btn-clear-tasks" id="clearDoneTasksBtn" title="Remove completed tasks">Clear Done</button>
+                </div>
+            </section>
+
+            <!-- 3. Interactive Grocery Checklist -->
             <section class="section-box">
                 <h2>🛒 Grocery Checklist</h2>
                 <div class="grocery-input-row">
@@ -796,6 +979,173 @@
                 } catch (e) {}
             });
 
+            // --- Daily Tasks Logic ---
+            const tasksItemsList = document.getElementById('tasksItemsList');
+            const tasksCurrentDayLabel = document.getElementById('tasksCurrentDayLabel');
+            const tasksProgressBadge = document.getElementById('tasksProgressBadge');
+            const taskInput = document.getElementById('taskInput');
+            const addTaskBtn = document.getElementById('addTaskBtn');
+            const clearDoneTasksBtn = document.getElementById('clearDoneTasksBtn');
+            const prevTaskDayBtn = document.getElementById('prevTaskDayBtn');
+            const nextTaskDayBtn = document.getElementById('nextTaskDayBtn');
+
+            let taskCurrentDate = new Date();
+            taskCurrentDate.setHours(0,0,0,0);
+            let currentDayTasks = [];
+
+            function getDateKey(d) {
+                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            }
+
+            function formatTaskDayLabel(d) {
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const diffTime = d.getTime() - today.getTime();
+                const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+                const dateStr = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                if (diffDays === 0) return `Today (${dateStr})`;
+                if (diffDays === 1) return `Tomorrow (${dateStr})`;
+                if (diffDays === -1) return `Yesterday (${dateStr})`;
+                return dateStr;
+            }
+
+            function parseTasksString(str) {
+                if (!str) return [];
+                return str.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
+                    let done = false;
+                    let text = line;
+                    if (/^\[x\]\s*/i.test(line) || /^-\s*\[x\]\s*/i.test(line) || /^✓\s*/.test(line)) {
+                        done = true;
+                        text = line.replace(/^(?:-\s*)?(?:\[x\]|✓)\s*/i, '');
+                    } else if (/^\[\s*\]\s*/.test(line) || /^-\s*\[\s*\]\s*/.test(line)) {
+                        done = false;
+                        text = line.replace(/^(?:-\s*)?\[\s*\]\s*/, '');
+                    } else if (/^[-*•]\s*/.test(line)) {
+                        text = line.replace(/^[-*•]\s*/, '');
+                    }
+                    return { text: text.trim(), done };
+                });
+            }
+
+            function serializeTasksArray(arr) {
+                return arr.map(t => `${t.done ? '[x]' : '[ ]'} ${t.text}`).join('\n');
+            }
+
+            async function loadTasksForDay() {
+                const dateKey = getDateKey(taskCurrentDate);
+                tasksCurrentDayLabel.textContent = formatTaskDayLabel(taskCurrentDate);
+
+                try {
+                    const res = await fetch(`/api/planner/${dateKey}`);
+                    if (!res.ok) throw new Error('Failed to load planner data');
+                    const data = await res.json();
+                    currentDayTasks = parseTasksString(data.tasks || '');
+                    renderTasks();
+                } catch (e) {
+                    tasksItemsList.innerHTML = '<p style="padding:10px; color:#888; text-align:center;">Could not load tasks.</p>';
+                    tasksProgressBadge.textContent = '0 / 0 done';
+                }
+            }
+
+            function renderTasks() {
+                if (currentDayTasks.length === 0) {
+                    tasksItemsList.innerHTML = '<p style="padding:15px; color:#888; text-align:center; font-size:0.92em;">No tasks scheduled for this day.<br><span style="font-size:0.85em; color:var(--primary-pink);">Type a task above to add one! ✨</span></p>';
+                    tasksProgressBadge.textContent = '0 / 0 done';
+                    return;
+                }
+
+                const doneCount = currentDayTasks.filter(t => t.done).length;
+                const totalCount = currentDayTasks.length;
+                const pct = Math.round((doneCount / totalCount) * 100);
+                tasksProgressBadge.textContent = `${doneCount} / ${totalCount} done (${pct}%)`;
+
+                tasksItemsList.innerHTML = '';
+                currentDayTasks.forEach((task, idx) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('task-item');
+                    if (task.done) itemDiv.classList.add('done');
+
+                    itemDiv.innerHTML = `
+                        <div class="task-item-left" data-task-idx="${idx}">
+                            <input type="checkbox" ${task.done ? 'checked' : ''} data-task-idx="${idx}">
+                            <span>${escapeHtml(task.text)}</span>
+                        </div>
+                        <button class="task-del-btn" data-task-del="${idx}" title="Delete task">&times;</button>
+                    `;
+                    tasksItemsList.appendChild(itemDiv);
+                });
+
+                // Checkbox toggle click listener
+                tasksItemsList.querySelectorAll('.task-item-left').forEach(el => {
+                    el.addEventListener('click', async (e) => {
+                        const idx = parseInt(el.dataset.taskIdx);
+                        const chk = el.querySelector('input');
+                        if (e.target !== chk) chk.checked = !chk.checked;
+                        currentDayTasks[idx].done = chk.checked;
+                        renderTasks();
+                        await saveCurrentTasks();
+                    });
+                });
+
+                // Delete click listener
+                tasksItemsList.querySelectorAll('.task-del-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const idx = parseInt(btn.dataset.taskDel);
+                        currentDayTasks.splice(idx, 1);
+                        renderTasks();
+                        await saveCurrentTasks();
+                    });
+                });
+            }
+
+            async function saveCurrentTasks() {
+                const dateKey = getDateKey(taskCurrentDate);
+                const tasksStr = serializeTasksArray(currentDayTasks);
+                try {
+                    await fetch(`/api/planner/${dateKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ tasks: tasksStr })
+                    });
+                } catch (e) {
+                    console.error('Failed to save tasks', e);
+                }
+            }
+
+            async function addNewTask() {
+                const val = taskInput.value.trim();
+                if (!val) return;
+
+                currentDayTasks.push({ text: val, done: false });
+                taskInput.value = '';
+                renderTasks();
+                await saveCurrentTasks();
+            }
+
+            addTaskBtn.addEventListener('click', addNewTask);
+            taskInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') addNewTask(); });
+
+            clearDoneTasksBtn.addEventListener('click', async () => {
+                const initialLen = currentDayTasks.length;
+                currentDayTasks = currentDayTasks.filter(t => !t.done);
+                if (currentDayTasks.length !== initialLen) {
+                    renderTasks();
+                    await saveCurrentTasks();
+                }
+            });
+
+            prevTaskDayBtn.addEventListener('click', () => {
+                taskCurrentDate.setDate(taskCurrentDate.getDate() - 1);
+                loadTasksForDay();
+            });
+
+            nextTaskDayBtn.addEventListener('click', () => {
+                taskCurrentDate.setDate(taskCurrentDate.getDate() + 1);
+                loadTasksForDay();
+            });
+
             function escapeHtml(str) {
                 if (!str) return '';
                 return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -803,6 +1153,7 @@
 
             // Init all sections
             loadUpcomingMeals();
+            loadTasksForDay();
             loadGroceries();
             loadStickies();
         });

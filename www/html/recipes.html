@@ -486,39 +486,85 @@
             background-color: #c82333;
         }
 
-        /* --- Cook Mode Modal (Full-Screen Focus) --- */
+        /* --- Cook Mode Modal (Full-Screen Focus for Large Recipes) --- */
         .cook-modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85);
             z-index: 2000;
-            padding: 20px;
+            padding: 16px;
             box-sizing: border-box;
             overflow-y: auto;
-            justify-content: center;
-            align-items: center;
+            -webkit-overflow-scrolling: touch;
         }
 
         .cook-container {
             background: var(--card-background);
             color: var(--text-color);
-            max-width: 750px;
+            max-width: 960px;
             width: 100%;
+            margin: 20px auto;
             border-radius: 16px;
-            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 40px);
             box-sizing: border-box;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .cook-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 20px;
+            padding: 16px 22px;
+            background: var(--card-background);
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .cook-header-title-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1 1 250px;
+        }
+
+        .cook-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cook-btn-pill {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 18px;
+            padding: 5px 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .cook-btn-pill:hover {
+            border-color: var(--primary-pink);
+            color: var(--primary-pink);
+        }
+
+        .cook-btn-pill.active {
+            background: var(--primary-pink);
+            color: white;
+            border-color: var(--primary-pink);
         }
 
         .cook-close {
@@ -528,47 +574,302 @@
             color: var(--primary-pink);
             cursor: pointer;
             line-height: 1;
+            padding: 0 4px;
+            transition: transform 0.2s;
         }
 
-        /* Kitchen Timer */
-        .timer-box {
+        .cook-close:hover {
+            transform: scale(1.15);
+        }
+
+        /* Kitchen Timer & View Switcher Bar */
+        .cook-toolbar {
+            padding: 10px 22px;
             background: var(--light-pink);
-            color: var(--primary-pink);
-            border-radius: 10px;
-            padding: 12px 18px;
-            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .timer-box {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .timer-display {
-            font-size: 1.6em;
+            font-size: 1.4em;
             font-weight: 700;
             font-family: monospace;
+            color: var(--primary-pink);
+            min-width: 70px;
         }
 
         .timer-controls button {
             background: var(--primary-pink);
             color: white;
             border: none;
-            padding: 6px 12px;
-            border-radius: 14px;
+            padding: 5px 10px;
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 600;
-            margin-left: 4px;
+            font-size: 0.85em;
+            margin-right: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .timer-controls button:hover {
+            background: var(--button-hover);
+        }
+
+        .cook-view-tabs {
+            display: flex;
+            gap: 6px;
+        }
+
+        .cook-tab-btn {
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            border-radius: 16px;
+            padding: 5px 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cook-tab-btn.active {
+            background: var(--primary-pink);
+            color: white;
+            border-color: var(--primary-pink);
+        }
+
+        /* Cook Main Body */
+        .cook-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 22px;
+            display: grid;
+            grid-template-columns: 310px 1fr;
+            gap: 20px;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 850px) {
+            .cook-body {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Ingredients Panel in Cook Mode */
+        .cook-ingredients-panel {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 100%;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .cook-ingredients-panel h3 {
+            margin: 0 0 6px 0;
+            font-size: 1.15em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cook-ingr-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 6px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95em;
+            cursor: pointer;
+            user-select: none;
+            transition: opacity 0.2s;
+        }
+
+        .cook-ingr-item:last-child {
+            border-bottom: none;
+        }
+
+        .cook-ingr-item.checked {
+            text-decoration: line-through;
+            opacity: 0.45;
+        }
+
+        .cook-ingr-checkbox {
+            width: 18px;
+            height: 18px;
+            margin-top: 3px;
+            accent-color: var(--primary-pink);
+            cursor: pointer;
+        }
+
+        /* Steps Panel in Cook Mode */
+        .cook-steps-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        .cook-progress-bar-container {
+            background: var(--border-color);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .cook-progress-fill {
+            background: var(--primary-pink);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Step-by-Step Card */
+        .step-focus-card {
+            background: var(--background-color);
+            border: 2px solid var(--primary-pink);
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-height: 180px;
+        }
+
+        .step-focus-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .step-focus-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--primary-pink);
+        }
+
+        .step-focus-text {
+            font-size: 1.25em;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            flex-grow: 1;
+        }
+
+        .step-nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .step-nav-btn {
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 9px 18px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background-color 0.2s, opacity 0.2s;
+        }
+
+        .step-nav-btn:hover:not(:disabled) {
+            background: var(--button-hover);
+        }
+
+        .step-nav-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .btn-step-check {
+            background: #28a745;
+        }
+        .btn-step-check:hover:not(:disabled) {
+            background: #218838;
+        }
+
+        .step-pills-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .step-pill {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: var(--background-color);
+            font-size: 0.85em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-color);
+        }
+
+        .step-pill.active {
+            background: var(--primary-pink);
+            color: white;
+            border-color: var(--primary-pink);
+        }
+
+        .step-pill.completed {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+
+        /* All Steps Checklist Mode */
+        .cook-all-steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .cook-step-item {
             display: flex;
             align-items: flex-start;
             gap: 12px;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-color);
+            padding: 12px 14px;
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             font-size: 1.05em;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cook-step-item:hover {
+            border-color: var(--primary-pink);
         }
 
         .cook-step-item.checked {
@@ -579,8 +880,10 @@
         .cook-step-checkbox {
             width: 20px;
             height: 20px;
-            margin-top: 4px;
+            margin-top: 3px;
             accent-color: var(--primary-pink);
+            flex-shrink: 0;
+            cursor: pointer;
         }
 
         /* Edit Recipe Modal */
@@ -657,8 +960,14 @@
                             <option value="Breakfast">Breakfast</option>
                             <option value="Lunch">Lunch</option>
                             <option value="Dinner">Dinner</option>
+                            <option value="Side Dish">Side Dish</option>
+                            <option value="Sauce">Sauce</option>
+                            <option value="Dressing">Dressing</option>
+                            <option value="Appetizers & Dips">Appetizers & Dips</option>
                             <option value="Dessert">Dessert</option>
+                            <option value="Baking & Bread">Baking & Bread</option>
                             <option value="Snacks & Smoothies">Snacks & Smoothies</option>
+                            <option value="Drinks & Cocktails">Drinks & Cocktails</option>
                         </select>
                     </div>
                 </div>
@@ -684,8 +993,14 @@
                 <button class="category-btn" data-category="Breakfast">Breakfast</button>
                 <button class="category-btn" data-category="Lunch">Lunch</button>
                 <button class="category-btn" data-category="Dinner">Dinner</button>
+                <button class="category-btn" data-category="Side Dish">Side Dish</button>
+                <button class="category-btn" data-category="Sauce">Sauce</button>
+                <button class="category-btn" data-category="Dressing">Dressing</button>
+                <button class="category-btn" data-category="Appetizers & Dips">Appetizers</button>
                 <button class="category-btn" data-category="Dessert">Dessert</button>
+                <button class="category-btn" data-category="Baking & Bread">Baking</button>
                 <button class="category-btn" data-category="Snacks & Smoothies">Snacks & Smoothies</button>
+                <button class="category-btn" data-category="Drinks & Cocktails">Drinks</button>
             </div>
         </section>
 
@@ -697,32 +1012,81 @@
         </section>
     </main>
 
-    <!-- Cook Mode Focus Modal -->
+    <!-- Cook Mode Focus Modal (Optimized for Large Recipes) -->
     <div id="cookModal" class="cook-modal">
         <div class="cook-container">
             <div class="cook-header">
-                <h2 id="cookTitle" style="margin:0;"></h2>
-                <button class="cook-close" id="closeCookBtn">&times;</button>
+                <div class="cook-header-title-area">
+                    <h2 id="cookTitle" style="margin:0; font-size:1.35em;"></h2>
+                </div>
+                <div class="cook-header-actions">
+                    <button class="cook-btn-pill" id="cookFontDecrease" title="Decrease Text Size">A-</button>
+                    <button class="cook-btn-pill" id="cookFontIncrease" title="Increase Text Size">A+</button>
+                    <button class="cook-btn-pill" id="cookWakeLockBtn" title="Keep screen awake while cooking">☀️ Stay Awake</button>
+                    <button class="cook-close" id="closeCookBtn" title="Close Cook Mode">&times;</button>
+                </div>
             </div>
 
-            <div class="timer-box">
-                <div>
-                    <strong>⏱️ Kitchen Timer: </strong>
+            <div class="cook-toolbar">
+                <div class="timer-box">
+                    <strong style="color:var(--primary-pink);">⏱️ Timer:</strong>
                     <span class="timer-display" id="timerDisplay">05:00</span>
+                    <div class="timer-controls">
+                        <button id="timerMinus1">-1m</button>
+                        <button id="timerPreset1">+1m</button>
+                        <button id="timerPreset5">+5m</button>
+                        <button id="timerToggle">Start</button>
+                        <button id="timerReset">Reset</button>
+                    </div>
                 </div>
-                <div class="timer-controls">
-                    <button id="timerPreset1">+1m</button>
-                    <button id="timerPreset5">+5m</button>
-                    <button id="timerToggle">Start</button>
-                    <button id="timerReset">Reset</button>
+                <div class="cook-view-tabs">
+                    <button class="cook-tab-btn active" id="tabStepFocus">🎯 Step Focus</button>
+                    <button class="cook-tab-btn" id="tabAllSteps">📋 All Steps</button>
                 </div>
             </div>
 
-            <h3>Ingredients (Scaled)</h3>
-            <div id="cookIngredientsList" style="margin-bottom: 20px; font-size:1.05em; line-height: 1.6;"></div>
+            <div class="cook-body" id="cookBody">
+                <!-- Ingredients Side Panel -->
+                <div class="cook-ingredients-panel">
+                    <h3>
+                        <span>🥗 Ingredients</span>
+                        <span id="ingrCountBadge" style="font-size:0.75em; font-weight:normal; color:#888;"></span>
+                    </h3>
+                    <div id="cookIngredientsList" style="flex:1; overflow-y:auto;"></div>
+                </div>
 
-            <h3>Step-by-Step Instructions</h3>
-            <div id="cookInstructionsList"></div>
+                <!-- Steps Main Panel -->
+                <div class="cook-steps-panel">
+                    <div class="cook-progress-bar-container">
+                        <div class="cook-progress-fill" id="cookProgressFill"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.88em; font-weight:600; color:var(--primary-pink);">
+                        <span id="stepCounterText">Step 1 of 1</span>
+                        <span id="stepPercentText">0% Complete</span>
+                    </div>
+
+                    <!-- Step-by-Step Focus Mode -->
+                    <div id="stepFocusSection" class="step-focus-card">
+                        <div class="step-focus-header">
+                            <span class="step-focus-num" id="currentStepHeader">Step 1</span>
+                            <button class="cook-btn-pill btn-step-check" id="toggleStepDoneBtn">✓ Mark Done</button>
+                        </div>
+                        <div class="step-focus-text" id="currentStepContent"></div>
+                        
+                        <div class="step-pills-row" id="stepPillsContainer"></div>
+
+                        <div class="step-nav-bar">
+                            <button class="step-nav-btn" id="prevStepBtn">&larr; Previous</button>
+                            <button class="step-nav-btn" id="nextStepBtn">Next Step &rarr;</button>
+                        </div>
+                    </div>
+
+                    <!-- All Steps Checklist View -->
+                    <div id="allStepsSection" class="cook-all-steps-list" style="display:none;">
+                        <div id="cookInstructionsList"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -741,8 +1105,14 @@
                     <option value="Breakfast">Breakfast</option>
                     <option value="Lunch">Lunch</option>
                     <option value="Dinner">Dinner</option>
+                    <option value="Side Dish">Side Dish</option>
+                    <option value="Sauce">Sauce</option>
+                    <option value="Dressing">Dressing</option>
+                    <option value="Appetizers & Dips">Appetizers & Dips</option>
                     <option value="Dessert">Dessert</option>
+                    <option value="Baking & Bread">Baking & Bread</option>
                     <option value="Snacks & Smoothies">Snacks & Smoothies</option>
+                    <option value="Drinks & Cocktails">Drinks & Cocktails</option>
                 </select>
 
                 <label for="editRecipeIngredients" style="font-weight:bold; color:var(--primary-pink); display:block; margin-bottom:5px;">Ingredients:</label>
@@ -1045,7 +1415,17 @@
                 if (!rec) return;
                 document.getElementById('editRecipeId').value = rec.id;
                 document.getElementById('editRecipeTitle').value = rec.title;
-                document.getElementById('editRecipeCategory').value = rec.category || 'General';
+                
+                const cat = rec.category || 'General';
+                const catSelect = document.getElementById('editRecipeCategory');
+                if (!Array.from(catSelect.options).some(opt => opt.value === cat)) {
+                    const customOpt = document.createElement('option');
+                    customOpt.value = cat;
+                    customOpt.textContent = cat;
+                    catSelect.appendChild(customOpt);
+                }
+                catSelect.value = cat;
+                
                 document.getElementById('editRecipeIngredients').value = rec.ingredients;
                 document.getElementById('editRecipeInstructions').value = rec.instructions;
                 editModal.style.display = 'flex';
@@ -1077,20 +1457,150 @@
                 }
             });
 
-            // --- Cook Mode Logic with Kitchen Timer ---
+            // --- Cook Mode Logic with Kitchen Timer & Step Focus ---
             const cookModal = document.getElementById('cookModal');
             const closeCookBtn = document.getElementById('closeCookBtn');
             const cookTitle = document.getElementById('cookTitle');
+            const cookBody = document.getElementById('cookBody');
             const cookIngredientsList = document.getElementById('cookIngredientsList');
+            const ingrCountBadge = document.getElementById('ingrCountBadge');
             const cookInstructionsList = document.getElementById('cookInstructionsList');
+            const stepFocusSection = document.getElementById('stepFocusSection');
+            const allStepsSection = document.getElementById('allStepsSection');
+            const currentStepHeader = document.getElementById('currentStepHeader');
+            const currentStepContent = document.getElementById('currentStepContent');
+            const toggleStepDoneBtn = document.getElementById('toggleStepDoneBtn');
+            const prevStepBtn = document.getElementById('prevStepBtn');
+            const nextStepBtn = document.getElementById('nextStepBtn');
+            const stepPillsContainer = document.getElementById('stepPillsContainer');
+            const stepCounterText = document.getElementById('stepCounterText');
+            const stepPercentText = document.getElementById('stepPercentText');
+            const cookProgressFill = document.getElementById('cookProgressFill');
+            const tabStepFocus = document.getElementById('tabStepFocus');
+            const tabAllSteps = document.getElementById('tabAllSteps');
+            const cookFontDecrease = document.getElementById('cookFontDecrease');
+            const cookFontIncrease = document.getElementById('cookFontIncrease');
+            const cookWakeLockBtn = document.getElementById('cookWakeLockBtn');
+
+            // Timer Elements
             const timerDisplay = document.getElementById('timerDisplay');
             const timerToggle = document.getElementById('timerToggle');
             const timerReset = document.getElementById('timerReset');
+            const timerMinus1 = document.getElementById('timerMinus1');
             const timerPreset1 = document.getElementById('timerPreset1');
             const timerPreset5 = document.getElementById('timerPreset5');
 
             let timerSeconds = 300;
             let timerInterval = null;
+            let currentRecipeSteps = [];
+            let currentStepIdx = 0;
+            let completedStepIndices = new Set();
+            let completedIngrIndices = new Set();
+            let cookFontScale = 1.0;
+            let wakeLock = null;
+
+            // Audio Alert for Timer Done
+            function playTimerBeep() {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.8);
+                } catch (e) {}
+            }
+
+            // Screen Wake Lock API
+            async function requestWakeLock() {
+                if ('wakeLock' in navigator) {
+                    try {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        if (cookWakeLockBtn) {
+                            cookWakeLockBtn.classList.add('active');
+                            cookWakeLockBtn.textContent = '☀️ Awake ON';
+                        }
+                    } catch (err) {
+                        console.warn('Wake Lock request failed:', err);
+                    }
+                }
+            }
+
+            function releaseWakeLock() {
+                if (wakeLock) {
+                    wakeLock.release().then(() => {
+                        wakeLock = null;
+                        if (cookWakeLockBtn) {
+                            cookWakeLockBtn.classList.remove('active');
+                            cookWakeLockBtn.textContent = '☀️ Stay Awake';
+                        }
+                    }).catch(() => {});
+                }
+            }
+
+            if (cookWakeLockBtn) {
+                cookWakeLockBtn.addEventListener('click', async () => {
+                    if (wakeLock) {
+                        releaseWakeLock();
+                    } else {
+                        await requestWakeLock();
+                    }
+                });
+            }
+
+            // Text zoom controls
+            cookFontDecrease.addEventListener('click', () => {
+                if (cookFontScale > 0.85) {
+                    cookFontScale -= 0.1;
+                    cookBody.style.fontSize = `${cookFontScale}em`;
+                }
+            });
+
+            cookFontIncrease.addEventListener('click', () => {
+                if (cookFontScale < 1.45) {
+                    cookFontScale += 0.1;
+                    cookBody.style.fontSize = `${cookFontScale}em`;
+                }
+            });
+
+            // Smart instructions parser for large recipes
+            function parseInstructionSteps(text) {
+                if (!text) return [];
+                const raw = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim();
+                const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+                if (lines.length === 0) return [];
+
+                // Check if single line has numbered steps like "1. Mix... 2. Bake..."
+                if (lines.length === 1 && /(?:^|\s)\d+[\.\)]\s+/.test(lines[0])) {
+                    const parts = lines[0].split(/(?=(?:^|\s)\d+[\.\)]\s+)/).map(s => s.trim().replace(/^\d+[\.\)]\s*/, '')).filter(Boolean);
+                    if (parts.length > 1) return parts;
+                }
+
+                let steps = [];
+                let current = "";
+                const isStepStart = (line) => /^(\d+[\.\)]|step\s+\d+[:\.]?|[-*•])\s+/i.test(line);
+
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (isStepStart(line)) {
+                        if (current) steps.push(current.trim());
+                        current = line.replace(/^(\d+[\.\)]|step\s+\d+[:\.]?|[-*•])\s*/i, '');
+                    } else {
+                        if (current) {
+                            current += "\n" + line;
+                        } else {
+                            current = line;
+                        }
+                    }
+                }
+                if (current) steps.push(current.trim());
+                return steps.length > 0 ? steps : lines;
+            }
 
             function openCookMode(id) {
                 const rec = allRecipesData.find(r => r.id === id);
@@ -1099,31 +1609,201 @@
                 const scaledIngr = scaleIngredients(rec.ingredients, scale);
 
                 cookTitle.textContent = `🍳 ${rec.title} (${scale}x)`;
+                currentRecipeSteps = parseInstructionSteps(rec.instructions);
+                currentStepIdx = 0;
+                completedStepIndices = new Set();
+                completedIngrIndices = new Set();
+                cookFontScale = 1.0;
+                cookBody.style.fontSize = '1em';
 
-                // Ingr list
-                cookIngredientsList.innerHTML = scaledIngr.split('\n').filter(l => l.trim()).map(line => `
-                    <div style="margin-bottom: 4px;">• ${escapeHtml(line.replace(/^[-*•]\s*/, ''))}</div>
-                `).join('');
+                // Render Ingredients Checklist
+                const ingrLines = scaledIngr.split('\n').map(l => l.trim()).filter(Boolean);
+                ingrCountBadge.textContent = `(${ingrLines.length} items)`;
 
-                // Instructions step by step checklist
-                const steps = rec.instructions.split('\n').filter(l => l.trim());
-                cookInstructionsList.innerHTML = steps.map((step, idx) => `
-                    <div class="cook-step-item" onclick="this.classList.toggle('checked'); this.querySelector('input').checked = !this.querySelector('input').checked;">
-                        <input type="checkbox" class="cook-step-checkbox" onclick="event.stopPropagation(); this.closest('.cook-step-item').classList.toggle('checked');">
-                        <div><strong>Step ${idx + 1}:</strong> ${escapeHtml(step.replace(/^\d+[\)\.]\s*/, ''))}</div>
+                cookIngredientsList.innerHTML = ingrLines.map((line, idx) => `
+                    <div class="cook-ingr-item" data-ingr-idx="${idx}">
+                        <input type="checkbox" class="cook-ingr-checkbox" data-ingr-idx="${idx}">
+                        <span>${escapeHtml(line.replace(/^[-*•]\s*/, ''))}</span>
                     </div>
                 `).join('');
 
-                cookModal.style.display = 'flex';
+                cookIngredientsList.querySelectorAll('.cook-ingr-item').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const idx = parseInt(el.dataset.ingrIdx);
+                        const chk = el.querySelector('input');
+                        if (e.target !== chk) chk.checked = !chk.checked;
+                        if (chk.checked) {
+                            completedIngrIndices.add(idx);
+                            el.classList.add('checked');
+                        } else {
+                            completedIngrIndices.delete(idx);
+                            el.classList.remove('checked');
+                        }
+                    });
+                });
+
+                // Render All Steps list
+                renderAllStepsList();
+
+                // Setup Step Focus view
+                renderCurrentStep();
+                switchCookView('focus');
+
+                cookModal.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // prevent background scrolling
+                requestWakeLock();
             }
 
-            closeCookBtn.addEventListener('click', () => {
+            function renderAllStepsList() {
+                cookInstructionsList.innerHTML = currentRecipeSteps.map((step, idx) => `
+                    <div class="cook-step-item ${completedStepIndices.has(idx) ? 'checked' : ''}" data-step-idx="${idx}">
+                        <input type="checkbox" class="cook-step-checkbox" ${completedStepIndices.has(idx) ? 'checked' : ''} data-step-idx="${idx}">
+                        <div style="flex:1;">
+                            <strong style="color:var(--primary-pink);">Step ${idx + 1}:</strong>
+                            <span style="white-space:pre-wrap;"> ${escapeHtml(step)}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                cookInstructionsList.querySelectorAll('.cook-step-item').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const idx = parseInt(el.dataset.stepIdx);
+                        const chk = el.querySelector('input');
+                        if (e.target !== chk) chk.checked = !chk.checked;
+                        toggleStepCompletion(idx, chk.checked);
+                    });
+                });
+            }
+
+            function renderCurrentStep() {
+                if (currentRecipeSteps.length === 0) {
+                    currentStepHeader.textContent = "No steps found";
+                    currentStepContent.textContent = "No instructions available for this recipe.";
+                    return;
+                }
+
+                const total = currentRecipeSteps.length;
+                currentStepHeader.textContent = `Step ${currentStepIdx + 1} of ${total}`;
+                currentStepContent.textContent = currentRecipeSteps[currentStepIdx];
+                stepCounterText.textContent = `Step ${currentStepIdx + 1} of ${total}`;
+
+                const pct = Math.round((completedStepIndices.size / total) * 100);
+                stepPercentText.textContent = `${pct}% Complete (${completedStepIndices.size}/${total})`;
+                cookProgressFill.style.width = `${pct}%`;
+
+                // Update Mark Done button state
+                const isDone = completedStepIndices.has(currentStepIdx);
+                toggleStepDoneBtn.textContent = isDone ? '✓ Completed' : 'Mark Step Done';
+                toggleStepDoneBtn.style.background = isDone ? '#28a745' : 'var(--background-color)';
+                toggleStepDoneBtn.style.color = isDone ? 'white' : 'var(--text-color)';
+                toggleStepDoneBtn.style.border = isDone ? '1px solid #28a745' : '1px solid var(--border-color)';
+
+                // Update Prev/Next buttons
+                prevStepBtn.disabled = currentStepIdx === 0;
+                nextStepBtn.disabled = currentStepIdx === total - 1;
+
+                // Step pills
+                stepPillsContainer.innerHTML = '';
+                for (let i = 0; i < total; i++) {
+                    const pill = document.createElement('button');
+                    pill.classList.add('step-pill');
+                    if (i === currentStepIdx) pill.classList.add('active');
+                    if (completedStepIndices.has(i)) pill.classList.add('completed');
+                    pill.textContent = i + 1;
+                    pill.title = `Jump to Step ${i + 1}`;
+                    pill.addEventListener('click', () => {
+                        currentStepIdx = i;
+                        renderCurrentStep();
+                    });
+                    stepPillsContainer.appendChild(pill);
+                }
+            }
+
+            function toggleStepCompletion(idx, isCompleted) {
+                if (isCompleted) {
+                    completedStepIndices.add(idx);
+                } else {
+                    completedStepIndices.delete(idx);
+                }
+                renderCurrentStep();
+                renderAllStepsList();
+
+                if (completedStepIndices.size === currentRecipeSteps.length && currentRecipeSteps.length > 0) {
+                    showToast('🎉 All recipe steps completed! Bon appétit!', 'success');
+                }
+            }
+
+            toggleStepDoneBtn.addEventListener('click', () => {
+                const isNowDone = !completedStepIndices.has(currentStepIdx);
+                toggleStepCompletion(currentStepIdx, isNowDone);
+                // Auto-advance to next step if marking done and not on last step
+                if (isNowDone && currentStepIdx < currentRecipeSteps.length - 1) {
+                    currentStepIdx++;
+                    renderCurrentStep();
+                }
+            });
+
+            prevStepBtn.addEventListener('click', () => {
+                if (currentStepIdx > 0) {
+                    currentStepIdx--;
+                    renderCurrentStep();
+                }
+            });
+
+            nextStepBtn.addEventListener('click', () => {
+                if (currentStepIdx < currentRecipeSteps.length - 1) {
+                    currentStepIdx++;
+                    renderCurrentStep();
+                }
+            });
+
+            // Keyboard navigation for Cook Mode
+            document.addEventListener('keydown', (e) => {
+                if (cookModal.style.display !== 'block') return;
+                if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+                    if (currentStepIdx < currentRecipeSteps.length - 1) {
+                        currentStepIdx++;
+                        renderCurrentStep();
+                    }
+                } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                    if (currentStepIdx > 0) {
+                        currentStepIdx--;
+                        renderCurrentStep();
+                    }
+                } else if (e.key === 'Escape') {
+                    closeCookMode();
+                }
+            });
+
+            function switchCookView(view) {
+                if (view === 'focus') {
+                    tabStepFocus.classList.add('active');
+                    tabAllSteps.classList.remove('active');
+                    stepFocusSection.style.display = 'flex';
+                    allStepsSection.style.display = 'none';
+                } else {
+                    tabAllSteps.classList.add('active');
+                    tabStepFocus.classList.remove('active');
+                    stepFocusSection.style.display = 'none';
+                    allStepsSection.style.display = 'flex';
+                }
+            }
+
+            tabStepFocus.addEventListener('click', () => switchCookView('focus'));
+            tabAllSteps.addEventListener('click', () => switchCookView('all'));
+
+            function closeCookMode() {
                 cookModal.style.display = 'none';
+                document.body.style.overflow = '';
                 clearInterval(timerInterval);
                 timerInterval = null;
                 timerToggle.textContent = 'Start';
-            });
+                releaseWakeLock();
+            }
 
+            closeCookBtn.addEventListener('click', closeCookMode);
+
+            // Timer functions
             function updateTimerDisplay() {
                 const mins = Math.floor(timerSeconds / 60);
                 const secs = timerSeconds % 60;
@@ -1145,7 +1825,8 @@
                             clearInterval(timerInterval);
                             timerInterval = null;
                             timerToggle.textContent = 'Start';
-                            alert('⏰ Timer done!');
+                            playTimerBeep();
+                            showToast('⏰ Kitchen Timer is done!', 'info');
                         }
                     }, 1000);
                 }
@@ -1159,6 +1840,14 @@
                 updateTimerDisplay();
             });
 
+            timerMinus1.addEventListener('click', () => {
+                if (timerSeconds >= 60) {
+                    timerSeconds -= 60;
+                } else {
+                    timerSeconds = 0;
+                }
+                updateTimerDisplay();
+            });
             timerPreset1.addEventListener('click', () => { timerSeconds += 60; updateTimerDisplay(); });
             timerPreset5.addEventListener('click', () => { timerSeconds += 300; updateTimerDisplay(); });
 
