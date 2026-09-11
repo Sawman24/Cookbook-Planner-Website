@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Daily Planner</title>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script src="theme.js"></script>
     <style>
         :root {
             --primary-pink: #FF6B81;
@@ -442,6 +443,7 @@
 <body>
     <header>
         <div class="theme-switch-wrapper">
+            <button type="button" class="theme-btn-customizer" onclick="window.openThemeModal && window.openThemeModal()">🎨 Theme</button>
             <label class="theme-switch" for="checkbox">
                 <input type="checkbox" id="checkbox" />
                 <div class="slider round"></div>
