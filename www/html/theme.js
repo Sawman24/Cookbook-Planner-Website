@@ -129,7 +129,7 @@
         );
     }
 
-    function lightenColor(hex, factor = 0.25) {
+    function lightenColor(hex, factor = 0.28) {
         const rgb = hexToRgb(hex);
         return rgbToHex(
             rgb.r + (255 - rgb.r) * factor,
@@ -174,13 +174,7 @@
     }
 
     function applyThemeCSS(config) {
-        let styleTag = document.getElementById('custom-theme-styles');
-        if (!styleTag) {
-            styleTag = document.createElement('style');
-            styleTag.id = 'custom-theme-styles';
-            document.head.appendChild(styleTag);
-        }
-
+        const isDark = document.body && document.body.classList.contains('dark-mode');
         const primary = config.primary || '#FF6B81';
         const hover = config.hover || darkenColor(primary, 0.15);
         const accent = config.accent || blendWithWhite(primary, 0.5);
@@ -189,22 +183,51 @@
         const darkHover = darkenColor(darkPrimary, 0.15);
         const patternCSS = getPatternCSS(config.pattern || 'floral', primary);
 
+        // 1. Direct inline CSS variables on documentElement (highest CSS specificity)
+        const root = document.documentElement;
+        if (root && root.style) {
+            root.style.setProperty('--primary-pink', isDark ? darkPrimary : primary);
+            root.style.setProperty('--button-hover', isDark ? darkHover : hover);
+            root.style.setProperty('--accent-pink', accent);
+            root.style.setProperty('--light-pink', isDark ? 'rgba(255,255,255,0.12)' : tint);
+            root.style.setProperty('--tag-bg', isDark ? 'rgba(255,255,255,0.12)' : tint);
+            root.style.setProperty('--tag-color', isDark ? darkPrimary : primary);
+            root.style.setProperty('--floral-pattern', patternCSS);
+        }
+
+        if (document.body) {
+            document.body.style.backgroundImage = patternCSS;
+        }
+
+        // 2. High-specificity stylesheet with !important rules
+        let styleTag = document.getElementById('custom-theme-styles');
+        if (!styleTag) {
+            styleTag = document.createElement('style');
+            styleTag.id = 'custom-theme-styles';
+            (document.head || document.documentElement).appendChild(styleTag);
+        } else {
+            // Re-append to ensure it remains at the end of head
+            if (styleTag.parentNode) {
+                styleTag.parentNode.appendChild(styleTag);
+            }
+        }
+
         styleTag.textContent = `
-            :root {
-                --primary-pink: ${primary};
-                --button-hover: ${hover};
-                --accent-pink: ${accent};
-                --light-pink: ${tint};
-                --tag-bg: ${tint};
-                --tag-color: ${primary};
-                --floral-pattern: ${patternCSS};
+            :root, html, body {
+                --primary-pink: ${primary} !important;
+                --button-hover: ${hover} !important;
+                --accent-pink: ${accent} !important;
+                --light-pink: ${tint} !important;
+                --tag-bg: ${tint} !important;
+                --tag-color: ${primary} !important;
+                --floral-pattern: ${patternCSS} !important;
             }
             body.dark-mode {
-                --primary-pink: ${darkPrimary};
-                --button-hover: ${darkHover};
-                --accent-pink: ${accent};
-                --tag-bg: rgba(255, 255, 255, 0.12);
-                --tag-color: ${darkPrimary};
+                --primary-pink: ${darkPrimary} !important;
+                --button-hover: ${darkHover} !important;
+                --accent-pink: ${accent} !important;
+                --tag-bg: rgba(255, 255, 255, 0.12) !important;
+                --tag-color: ${darkPrimary} !important;
             }
             .theme-btn-customizer {
                 display: inline-flex;
@@ -231,9 +254,22 @@
         `;
     }
 
-    // Apply saved theme immediately on script evaluation to prevent visual flicker
+    // Apply saved theme immediately on load
     const initialConfig = loadThemeConfig();
     applyThemeCSS(initialConfig);
+
+    // Watch for dark mode changes on body
+    function setupDarkModeObserver() {
+        if (!document.body) return;
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    applyThemeCSS(loadThemeConfig());
+                }
+            }
+        });
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    }
 
     // Modal UI Generation
     function createThemeModal() {
@@ -249,7 +285,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.6);
-            z-index: 10000;
+            z-index: 99999;
             overflow-y: auto;
             backdrop-filter: blur(4px);
             align-items: center;
@@ -291,6 +327,7 @@
                         text-align: center;
                         transition: all 0.2s ease;
                         background: var(--background-color, #fff);
+                        color: var(--text-color, #333);
                     }
                     .theme-preset-card:hover {
                         transform: translateY(-2px);
@@ -605,6 +642,8 @@
 
     // Initialize when DOM is ready
     function init() {
+        applyThemeCSS(loadThemeConfig());
+        setupDarkModeObserver();
         createThemeModal();
 
         // Check if header exists and add theme button if not present
