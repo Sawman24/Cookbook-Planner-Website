@@ -1256,7 +1256,11 @@
                 });
 
                 if (filtered.length === 0) {
-                    recipesContainer.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 20px;">No matching recipes found.</p>';
+                    if (allRecipesData.length === 0) {
+                        recipesContainer.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 36px 20px; opacity:0.85; font-size:1.05em;">🍽️ No recipes yet! Use the form above to add your first recipe.</p>';
+                    } else {
+                        recipesContainer.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 20px; opacity:0.85;">No matching recipes found.</p>';
+                    }
                     return;
                 }
 
