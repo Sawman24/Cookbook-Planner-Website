@@ -300,31 +300,59 @@ def parse_iso_duration(val):
 
 def classify_recipe_category(title, raw_category="", text=""):
     """Intelligently maps raw category or recipe keywords to one of the 15 supported categories."""
+    t_lower = title.lower()
+    raw_lower = raw_category.lower()
     combined = f"{title} {raw_category} {text}".lower()
 
+    # Exact match on raw category if present
     for cat in VALID_RECIPE_CATEGORIES:
-        if cat.lower() in raw_category.lower():
+        if cat.lower() in raw_lower:
             return cat
 
+    # High priority matching on recipe title
+    if any(k in t_lower for k in ['soup', 'stew', 'chowder', 'chili', 'bisque', 'broth', 'ramen', 'gumbo']):
+        return 'Soup'
+    if any(k in t_lower for k in ['sandwich', 'burger', 'panini', 'wrap', 'sub', 'toast', 'grilled cheese', 'slider', 'tacos', 'taco', 'fajita', 'burrito', 'quesadilla']):
+        return 'Mains & Entrees'
+    if any(k in t_lower for k in ['salad', 'slaw', 'vinaigrette salad']):
+        return 'Salad'
+    if any(k in t_lower for k in ['pasta', 'spaghetti', 'fettuccine', 'penne', 'lasagna', 'ravioli', 'macaroni', 'carbonara', 'bolognese', 'gnocchi', 'noodles', 'alfredo']):
+        return 'Pasta'
+    if any(k in t_lower for k in ['pancake', 'waffle', 'omelet', 'egg', 'oatmeal', 'french toast', 'crepe', 'frittata', 'breakfast', 'granola']):
+        return 'Breakfast'
+    if any(k in t_lower for k in ['cookie', 'cake', 'brownie', 'cupcake', 'pie', 'tart', 'pudding', 'ice cream', 'dessert', 'cheesecake', 'tiramisu', 'fudge', 'chocolate', 'frosting']):
+        return 'Dessert'
+    if any(k in t_lower for k in ['bread', 'biscuit', 'scone', 'muffin', 'focaccia', 'sourdough', 'dough', 'loaf', 'crust', 'bagel', 'roll', 'bun']):
+        return 'Baking & Bread'
+    if any(k in t_lower for k in ['dressing', 'vinaigrette']):
+        return 'Dressing'
+    if any(k in t_lower for k in ['sauce', 'salsa', 'gravy', 'marinade', 'pesto', 'mayo', 'aioli', 'glaze']):
+        return 'Sauce'
+    if any(k in t_lower for k in ['chicken', 'beef', 'steak', 'pork', 'salmon', 'fish', 'roast', 'casserole', 'curry', 'stir fry', 'ribs', 'meatball', 'main', 'dinner', 'entree', 'pork chop', 'shrimp']):
+        return 'Mains & Entrees'
+
+    # Fallback matching on full text
     if any(k in combined for k in ['soup', 'stew', 'chowder', 'chili', 'bisque', 'broth', 'ramen', 'gumbo']):
         return 'Soup'
     if any(k in combined for k in ['sandwich', 'burger', 'panini', 'wrap', 'sub', 'toast', 'grilled cheese', 'slider']):
         return 'Sandwich'
     if any(k in combined for k in ['salad', 'slaw', 'vinaigrette salad']):
         return 'Salad'
-    if any(k in combined for k in ['pasta', 'spaghetti', 'fettuccine', 'penne', 'lasagna', 'ravioli', 'macaroni', 'carbonara', 'bolognese', 'gnocchi', 'noodles']):
+    if any(k in combined for k in ['pasta', 'spaghetti', 'fettuccine', 'penne', 'lasagna', 'ravioli', 'macaroni', 'carbonara', 'bolognese', 'gnocchi', 'noodles', 'alfredo']):
         return 'Pasta'
     if any(k in combined for k in ['pancake', 'waffle', 'omelet', 'egg', 'oatmeal', 'french toast', 'crepe', 'frittata', 'breakfast', 'granola']):
         return 'Breakfast'
-    if any(k in combined for k in ['cocktail', 'margarita', 'martini', 'drink', 'smoothie', 'latte', 'lemonade', 'punch', 'tea', 'mocktail', 'beverage']):
-        return 'Drinks & Cocktails' if any(k in combined for k in ['cocktail', 'drink', 'martini', 'margarita', 'punch', 'beverage']) else 'Snacks & Smoothies'
+    if any(k in combined for k in ['cocktail', 'margarita', 'martini', 'drink', 'punch', 'mocktail']):
+        return 'Drinks & Cocktails'
+    if any(k in combined for k in ['smoothie', 'shake', 'latte', 'lemonade', 'juice']):
+        return 'Snacks & Smoothies'
     if any(k in combined for k in ['cookie', 'cake', 'brownie', 'cupcake', 'pie', 'tart', 'pudding', 'ice cream', 'dessert', 'cheesecake', 'tiramisu', 'fudge', 'chocolate', 'frosting']):
         return 'Dessert'
     if any(k in combined for k in ['bread', 'biscuit', 'scone', 'muffin', 'focaccia', 'sourdough', 'dough', 'loaf', 'crust', 'bagel', 'roll', 'bun']):
         return 'Baking & Bread'
     if any(k in combined for k in ['dressing', 'vinaigrette']):
         return 'Dressing'
-    if any(k in combined for k in ['sauce', 'salsa', 'gravy', 'marinade', 'pesto', 'mayo', 'aioli', 'glaze', 'alfredo']):
+    if any(k in combined for k in ['sauce', 'salsa', 'gravy', 'marinade', 'pesto', 'mayo', 'aioli', 'glaze']):
         return 'Sauce'
     if any(k in combined for k in ['dip', 'appetizer', 'bruschetta', 'nachos', 'wings', 'snack', 'crostini', 'bites', 'tapas']):
         return 'Appetizers & Dips'
@@ -336,44 +364,49 @@ def classify_recipe_category(title, raw_category="", text=""):
     return 'General'
 
 def fetch_recipe_html(url):
-    """Fetches raw HTML from a recipe URL with realistic browser headers and automatic proxy fallback for bot-protected websites."""
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Accept-Encoding': 'gzip, deflate',
-        'Sec-Ch-Ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
-        'Sec-Ch-Ua-Mobile': '?0',
-        'Sec-Ch-Ua-Platform': '"Windows"',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none',
-        'Sec-Fetch-User': '?1',
-        'Upgrade-Insecure-Requests': '1',
-    }
+    """Fetches raw HTML from a recipe URL with multiple browser fingerprints and automatic proxy fallback for bot-protected websites."""
+    header_variants = [
+        # Variant 1: Mobile Safari with cross-site Referer (bypasses Dotdash Meredith / Allrecipes / Serious Eats / Cloudflare blogs)
+        {
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4.1 Mobile/15E148 Safari/604.1',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Referer': 'https://www.google.com/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'cross-site'
+        },
+        # Variant 2: Modern Desktop Chrome
+        {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Referer': 'https://www.google.com/'
+        }
+    ]
 
-    # Step 1: Direct fetch with standard browser session
-    try:
-        session = requests.Session()
-        resp = session.get(url, headers=headers, timeout=12, allow_redirects=True)
-        if resp.status_code == 200 and len(resp.text) > 400:
-            lowered = resp.text[:2500].lower()
-            # Only trigger proxy fallback on genuine bot-blocker / challenge pages
-            is_challenge = any(x in lowered for x in [
-                '<title>just a moment...</title>',
-                '<title>access denied</title>',
-                '<title>attention required! | cloudflare</title>',
-                '<title>403 forbidden</title>',
-                '<title>robot or human?</title>',
-                '<title>security check</title>',
-                'action="/_bm/_data"',
-                'cf-browser-verification',
-                'id="challenge-running"'
-            ])
-            if not is_challenge:
-                return resp.text
-    except Exception:
-        pass
+    # Step 1: Try direct fetches with different header fingerprints
+    for headers in header_variants:
+        try:
+            session = requests.Session()
+            resp = session.get(url, headers=headers, timeout=10, allow_redirects=True)
+            if resp.status_code == 200 and len(resp.text) > 400:
+                lowered = resp.text[:2500].lower()
+                is_challenge = any(x in lowered for x in [
+                    '<title>just a moment...</title>',
+                    '<title>access denied</title>',
+                    '<title>attention required! | cloudflare</title>',
+                    '<title>403 forbidden</title>',
+                    '<title>robot or human?</title>',
+                    '<title>security check</title>',
+                    'action="/_bm/_data"',
+                    'cf-browser-verification',
+                    'id="challenge-running"'
+                ])
+                if not is_challenge:
+                    return resp.text
+        except Exception:
+            pass
 
     # Step 2: Fallback to Jina Reader proxy with HTML output (bypasses Akamai/Cloudflare EdgeSuite like Food Network)
     jina_url = f"https://r.jina.ai/{url}"
@@ -393,7 +426,7 @@ def fetch_recipe_html(url):
         pass
 
     # Step 4: Re-run direct request to raise descriptive HTTP error if website was completely unreachable
-    resp = requests.get(url, headers=headers, timeout=12, allow_redirects=True)
+    resp = requests.get(url, headers=header_variants[0], timeout=12, allow_redirects=True)
     resp.raise_for_status()
     return resp.text
 
@@ -493,92 +526,94 @@ def extract_recipe_from_url(url, raw_content=None):
     except Exception:
         pass
 
-    # Strategy 2: Deep BeautifulSoup JSON-LD Schema.org parser
+    # Strategy 2: Deep Schema.org JSON-LD parser (BeautifulSoup or Regex)
     if not title or not ingredients or not instructions:
-        try:
-            soup = BeautifulSoup(html_content, 'html.parser')
-            scripts = soup.find_all('script', type=re.compile(r'application/ld\+json', re.I))
+        json_ld_matches = re.findall(r'<script[^>]+type=[\"\']application/ld\+json[\"\'][^>]*>(.*?)</script>', html_content, re.DOTALL | re.I)
+        recipe_nodes = []
 
-            recipe_nodes = []
-            def search_nodes(node):
-                if isinstance(node, dict):
-                    t = node.get('@type')
-                    if t == 'Recipe' or (isinstance(t, list) and 'Recipe' in t) or (isinstance(t, str) and 'recipe' in t.lower()):
-                        recipe_nodes.append(node)
-                    if '@graph' in node and isinstance(node['@graph'], list):
-                        for sub in node['@graph']:
-                            search_nodes(sub)
-                    if 'mainEntity' in node:
-                        search_nodes(node['mainEntity'])
-                elif isinstance(node, list):
-                    for item in node:
-                        search_nodes(item)
+        def search_nodes(node):
+            if isinstance(node, dict):
+                t = node.get('@type')
+                if t == 'Recipe' or (isinstance(t, list) and 'Recipe' in t) or (isinstance(t, str) and 'recipe' in t.lower()):
+                    recipe_nodes.append(node)
+                if '@graph' in node and isinstance(node['@graph'], list):
+                    for sub in node['@graph']:
+                        search_nodes(sub)
+                if 'mainEntity' in node:
+                    search_nodes(node['mainEntity'])
+            elif isinstance(node, list):
+                for item in node:
+                    search_nodes(item)
 
-            for s in scripts:
-                content = s.string or s.get_text() or ''
-                if not content.strip():
-                    continue
-                try:
-                    parsed_json = json.loads(content.strip())
-                    search_nodes(parsed_json)
-                except Exception:
-                    continue
+        for raw_json in json_ld_matches:
+            content = raw_json.strip()
+            if not content:
+                continue
+            try:
+                parsed_json = json.loads(content)
+                search_nodes(parsed_json)
+            except Exception:
+                continue
 
-            for r in recipe_nodes:
-                if not title:
-                    title = r.get('name') or r.get('headline') or ''
+        for r in recipe_nodes:
+            if not title:
+                title = r.get('name') or r.get('headline') or ''
 
-                if not ingredients and 'recipeIngredient' in r:
-                    raw_ing = r['recipeIngredient']
-                    if isinstance(raw_ing, list):
-                        ingredients = [str(x).strip() for x in raw_ing if str(x).strip()]
-                    elif isinstance(raw_ing, str):
-                        ingredients = [line.strip() for line in raw_ing.split('\n') if line.strip()]
+            if not ingredients and 'recipeIngredient' in r:
+                raw_ing = r['recipeIngredient']
+                if isinstance(raw_ing, list):
+                    ingredients = [str(x).strip() for x in raw_ing if str(x).strip()]
+                elif isinstance(raw_ing, str):
+                    ingredients = [line.strip() for line in raw_ing.split('\n') if line.strip()]
 
-                if not instructions and 'recipeInstructions' in r:
-                    raw_inst = r['recipeInstructions']
-                    if isinstance(raw_inst, list):
-                        for step in raw_inst:
-                            if isinstance(step, dict):
-                                if 'itemListElement' in step and isinstance(step['itemListElement'], list):
-                                    for sub_step in step['itemListElement']:
-                                        if isinstance(sub_step, dict) and 'text' in sub_step:
-                                            instructions.append(str(sub_step['text']).strip())
-                                        elif isinstance(sub_step, str):
-                                            instructions.append(sub_step.strip())
-                                elif 'text' in step:
-                                    instructions.append(str(step['text']).strip())
-                            elif isinstance(step, str):
-                                instructions.append(step.strip())
-                    elif isinstance(raw_inst, str):
-                        instructions = [line.strip() for line in raw_inst.split('\n') if line.strip()]
+            if not instructions and 'recipeInstructions' in r:
+                raw_inst = r['recipeInstructions']
+                if isinstance(raw_inst, list):
+                    for step in raw_inst:
+                        if isinstance(step, dict):
+                            if 'itemListElement' in step and isinstance(step['itemListElement'], list):
+                                for sub_step in step['itemListElement']:
+                                    if isinstance(sub_step, dict) and 'text' in sub_step:
+                                        instructions.append(str(sub_step['text']).strip())
+                                    elif isinstance(sub_step, str):
+                                        instructions.append(sub_step.strip())
+                            elif 'text' in step:
+                                instructions.append(str(step['text']).strip())
+                        elif isinstance(step, str):
+                            instructions.append(step.strip())
+                elif isinstance(raw_inst, str):
+                    instructions = [line.strip() for line in raw_inst.split('\n') if line.strip()]
 
-                if not prep_time and 'prepTime' in r:
-                    prep_time = parse_iso_duration(r['prepTime'])
+            if not prep_time and 'prepTime' in r:
+                prep_time = parse_iso_duration(r['prepTime'])
 
-                if not cook_time:
-                    if 'cookTime' in r:
-                        cook_time = parse_iso_duration(r['cookTime'])
-                    elif 'totalTime' in r:
-                        cook_time = parse_iso_duration(r['totalTime'])
+            if not cook_time:
+                if 'cookTime' in r:
+                    cook_time = parse_iso_duration(r['cookTime'])
+                elif 'totalTime' in r:
+                    cook_time = parse_iso_duration(r['totalTime'])
 
-                if not servings and ('recipeYield' in r or 'yield' in r):
-                    y = r.get('recipeYield') or r.get('yield')
-                    servings = str(y[0]) if isinstance(y, list) and y else str(y or '')
+            if not servings and ('recipeYield' in r or 'yield' in r):
+                y = r.get('recipeYield') or r.get('yield')
+                if isinstance(y, list) and len(y) > 1 and not str(y[0]).isalpha():
+                    servings = str(y[-1])
+                elif isinstance(y, list) and y:
+                    servings = str(y[0])
+                else:
+                    servings = str(y or '')
 
-                if category == 'General' and 'recipeCategory' in r:
-                    cat_val = r['recipeCategory']
-                    cat_str = ", ".join(cat_val) if isinstance(cat_val, list) else str(cat_val)
-                    category = classify_recipe_category(title, cat_str, " ".join(ingredients))
+            if category == 'General' and 'recipeCategory' in r:
+                cat_val = r['recipeCategory']
+                cat_str = ", ".join(cat_val) if isinstance(cat_val, list) else str(cat_val)
+                category = classify_recipe_category(title, cat_str, " ".join(ingredients))
 
-                if title and ingredients and instructions:
-                    break
-        except Exception:
-            pass
+            if title and ingredients and instructions:
+                break
 
     # Strategy 3: Microdata & Recipe Plugin HTML DOM Parser (WordPress Recipe Maker, Tasty, Mediavine Create, etc.)
     if not title or not ingredients or not instructions:
         try:
+            from bs4 import BeautifulSoup
             soup = BeautifulSoup(html_content, 'html.parser')
 
             if not title:
