@@ -608,6 +608,260 @@
             text-decoration: underline;
         }
 
+        /* --- Modern Recipe Action Hub --- */
+        .recipe-action-hub {
+            margin-bottom: 20px;
+        }
+
+        .hub-buttons-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-hub-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background: var(--card-background);
+            color: var(--text-color);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            user-select: none;
+        }
+
+        .btn-hub-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.09);
+            border-color: var(--primary-pink);
+        }
+
+        .btn-hub-add {
+            background: var(--primary-pink);
+            color: white;
+            border-color: var(--primary-pink);
+        }
+
+        .btn-hub-add:hover {
+            background: var(--button-hover);
+            color: white;
+        }
+
+        .btn-hub-import {
+            background: var(--light-pink);
+            color: var(--primary-pink);
+            border-color: var(--primary-pink);
+        }
+
+        .btn-hub-import:hover {
+            background: var(--primary-pink);
+            color: white;
+        }
+
+        .btn-hub-pantry.active {
+            background: var(--light-pink);
+            border-color: var(--primary-pink);
+            color: var(--primary-pink);
+        }
+
+        .btn-hub-match.active {
+            background: var(--primary-pink);
+            color: white;
+            border-color: var(--primary-pink);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+
+        .hub-badge {
+            background: var(--primary-pink);
+            color: white;
+            font-size: 0.75em;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        .btn-hub-pantry.active .hub-badge {
+            background: white;
+            color: var(--primary-pink);
+        }
+
+        /* Collapsible Form Animation */
+        .recipe-form-container {
+            transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.35s ease;
+            overflow: hidden;
+        }
+
+        .recipe-form-container.collapsed {
+            display: none;
+        }
+
+        /* --- Recipe Import Modal Styles --- */
+        .import-modal {
+            display: none;
+            position: fixed;
+            z-index: 2500;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.55);
+            backdrop-filter: blur(3px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .import-modal-content {
+            background-color: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            box-sizing: border-box;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .import-supported-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 10px 0 16px;
+        }
+
+        .import-site-chip {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 3px 9px;
+            border-radius: 12px;
+            font-size: 0.76em;
+            opacity: 0.85;
+        }
+
+        .import-input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .import-input-row input {
+            flex: 1;
+            padding: 11px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95em;
+            background: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .import-input-row input:focus {
+            border-color: var(--primary-pink);
+            outline: none;
+        }
+
+        .import-fetch-btn {
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 11px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95em;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            transition: background-color 0.2s;
+        }
+
+        .import-fetch-btn:hover {
+            background: var(--button-hover);
+        }
+
+        .import-spinner-box {
+            display: none;
+            text-align: center;
+            padding: 24px 10px;
+        }
+
+        .import-spinner {
+            width: 36px;
+            height: 36px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-pink);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .import-preview-card {
+            display: none;
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 15px;
+        }
+
+        .import-preview-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2em;
+            color: var(--primary-pink);
+            margin: 0 0 8px;
+        }
+
+        .import-preview-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* Search Input Clear Button */
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            flex: 1 1 260px;
+        }
+
+        .search-clear-btn {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.1em;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+            display: none;
+        }
+
+        .search-clear-btn:hover {
+            color: var(--primary-pink);
+        }
+
         .pantry-match-badge {
             margin: 6px 0 10px;
             padding: 6px 10px;
@@ -1226,8 +1480,30 @@
     </header>
 
     <main>
-        <section class="recipe-form">
-            <h2 id="formHeading">Add a New Recipe</h2>
+        <!-- Modern Recipe Action Hub -->
+        <section class="recipe-action-hub">
+            <div class="hub-buttons-row">
+                <button type="button" class="btn-hub-action btn-hub-add" id="toggleAddRecipeBtn" title="Create a new recipe manually">
+                    <span>➕</span> <span>Add Recipe</span>
+                </button>
+                <button type="button" class="btn-hub-action btn-hub-import" id="openImportModalBtn" title="Import a recipe from any website URL">
+                    <span>📥</span> <span>Import from Web</span>
+                </button>
+                <button type="button" class="btn-hub-action btn-hub-pantry" id="pantryToggleBtn" title="Manage ingredients in your kitchen">
+                    <span>🥫</span> <span>My Pantry</span> <span id="pantryCountBadge" class="hub-badge">0</span>
+                </button>
+                <button type="button" class="btn-hub-action btn-hub-match" id="pantryMatchBtn" title="Filter recipes you can make with stocked pantry items">
+                    <span>✨</span> <span>What Can I Make?</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Collapsible Recipe Composer Form -->
+        <section class="recipe-form recipe-form-container collapsed" id="recipeFormSection">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                <h2 id="formHeading" style="margin:0; font-size:1.35em;">Add a New Recipe</h2>
+                <button type="button" id="closeRecipeFormBtn" style="background:none; border:none; font-size:1.4em; color:var(--text-color); cursor:pointer; padding:0 6px;" title="Close Form">✕</button>
+            </div>
             <form id="addRecipeForm">
                 <div class="form-grid">
                     <div>
@@ -1285,33 +1561,31 @@
                 <label for="recipeInstructions">Instructions:</label>
                 <textarea id="recipeInstructions" rows="6" placeholder="1) Mix dry ingredients in a bowl.&#10;2) Add wet ingredients and stir." required></textarea>
 
-                <button type="submit" id="saveRecipeBtn">Add Recipe</button>
+                <div style="display:flex; justify-content:center; gap:12px; margin-top:8px;">
+                    <button type="button" id="cancelFormBtn" style="background:#888; color:white; padding:10px 20px; border-radius:20px; border:none; cursor:pointer; font-weight:600;">Cancel</button>
+                    <button type="submit" id="saveRecipeBtn">Save Recipe</button>
+                </div>
             </form>
         </section>
 
+        <!-- Search, Pantry & Filter Controls -->
         <section class="controls-panel">
-            <div class="search-wrapper">
-                <label for="recipeSearch" style="font-weight:bold; color:var(--primary-pink);">Search:</label>
-                <input type="text" id="recipeSearch" placeholder="Type to search title or ingredient...">
-            </div>
-
-            <div class="pantry-bar-row">
-                <button type="button" class="btn-pantry-toggle" id="pantryToggleBtn">
-                    🥫 My Pantry <span id="pantryCountBadge">(0 items)</span> ▾
-                </button>
-                <button type="button" class="btn-pantry-match" id="pantryMatchBtn">
-                    ✨ What Can I Make?
-                </button>
+            <div style="display:flex; gap:12px; align-items:center; width:100%; flex-wrap:wrap;">
+                <div class="search-container">
+                    <input type="text" id="recipeSearch" placeholder="🔍 Search recipes, ingredients, tags...">
+                    <button type="button" class="search-clear-btn" id="searchClearBtn" title="Clear search">✕</button>
+                </div>
+                <div id="recipeResultsCounter" style="font-size:0.85em; font-weight:600; opacity:0.8; margin-left:auto;"></div>
             </div>
 
             <!-- Collapsible Pantry Drawer -->
             <div class="pantry-drawer" id="pantryDrawer" style="display:none;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <strong style="color:var(--primary-pink); font-size:1em;">🥫 Kitchen & Pantry Ingredients</strong>
+                    <strong style="color:var(--primary-pink); font-size:1em;">🥫 Kitchen & Pantry Stock</strong>
                     <button type="button" id="clearPantryBtn" class="btn-text-danger">Clear All</button>
                 </div>
                 <p style="font-size:0.85em; opacity:0.8; margin:0 0 10px;">
-                    Add ingredients you currently have at home to see recipes you can make right away!
+                    Tag items you currently have at home to highlight recipes you can make immediately!
                 </p>
 
                 <div class="pantry-staples-label">Quick-add common staples:</div>
@@ -1352,6 +1626,65 @@
             </div>
         </section>
     </main>
+
+    <!-- Recipe Web Importer Modal -->
+    <div id="importRecipeModal" class="import-modal">
+        <div class="import-modal-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h2 style="margin:0; font-size:1.3em; color:var(--primary-pink); display:flex; align-items:center; gap:8px;">
+                    <span>📥</span> Import Recipe from Web
+                </h2>
+                <button type="button" id="closeImportModalBtn" style="background:none; border:none; font-size:1.6em; color:var(--text-color); cursor:pointer; line-height:1;" title="Close Modal">&times;</button>
+            </div>
+            
+            <p style="margin:0 0 10px; font-size:0.88em; opacity:0.85;">
+                Paste any recipe link from your favorite food blog or recipe website to automatically extract the title, ingredients, steps, and cooking times!
+            </p>
+
+            <div class="import-supported-chips">
+                <span class="import-site-chip">✨ AllRecipes</span>
+                <span class="import-site-chip">✨ Food Network</span>
+                <span class="import-site-chip">✨ NYT Cooking</span>
+                <span class="import-site-chip">✨ Serious Eats</span>
+                <span class="import-site-chip">✨ Tasty</span>
+                <span class="import-site-chip">✨ Sally's Baking</span>
+                <span class="import-site-chip">✨ Delish</span>
+                <span class="import-site-chip">✨ + 100s More</span>
+            </div>
+
+            <div class="import-input-row">
+                <input type="url" id="importUrlInput" placeholder="https://www.allrecipes.com/recipe/..." required>
+                <button type="button" class="import-fetch-btn" id="fetchImportBtn">
+                    <span>⚡</span> <span>Fetch</span>
+                </button>
+            </div>
+
+            <div class="import-spinner-box" id="importSpinnerBox">
+                <div class="import-spinner"></div>
+                <div id="importSpinnerText" style="font-weight:600; color:var(--primary-pink); font-size:0.92em;">Scraping and parsing recipe details...</div>
+            </div>
+
+            <div id="importErrorAlert" style="display:none; padding:12px 14px; border-radius:8px; background:#FFEBEE; color:#C62828; border:1px solid #FFCDD2; margin-top:12px; font-size:0.9em;"></div>
+
+            <!-- Scraped Preview Card -->
+            <div class="import-preview-card" id="importPreviewCard">
+                <div style="font-size:0.75em; text-transform:uppercase; font-weight:700; color:var(--primary-pink); letter-spacing:0.5px; margin-bottom:4px;">✨ Scraped Recipe Preview</div>
+                <h3 class="import-preview-title" id="previewTitle"></h3>
+                
+                <div class="recipe-meta-badges" id="previewBadges"></div>
+
+                <div style="margin-top:10px; font-size:0.85em; max-height:140px; overflow-y:auto; border:1px solid var(--border-color); border-radius:8px; padding:10px; background:var(--card-background);">
+                    <strong style="display:block; margin-bottom:4px; color:var(--primary-pink);">Ingredients Sample:</strong>
+                    <pre id="previewIngredients" style="margin:0; font-family:inherit; white-space:pre-wrap;"></pre>
+                </div>
+
+                <div class="import-preview-actions">
+                    <button type="button" id="editImportedRecipeBtn" style="background:var(--background-color); border:1px solid var(--border-color); color:var(--text-color); padding:8px 16px; border-radius:20px; font-weight:600; cursor:pointer;">✏️ Edit Details First</button>
+                    <button type="button" id="saveImportedRecipeBtn" style="background:var(--primary-pink); border:none; color:white; padding:8px 20px; border-radius:20px; font-weight:700; cursor:pointer;">💾 Save to Cookbook</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Cook Mode Focus Modal (Optimized for Large Recipes) -->
     <div id="cookModal" class="cook-modal">
@@ -1775,7 +2108,31 @@
                 }
             });
 
+            function updateCategoryBadges() {
+                if (!categoryFilters) return;
+                const counts = { All: allRecipesData.length, Favorites: allRecipesData.filter(r => r.is_favorite).length };
+                allRecipesData.forEach(r => {
+                    const c = r.category || 'General';
+                    counts[c] = (counts[c] || 0) + 1;
+                });
+
+                categoryFilters.querySelectorAll('.category-btn').forEach(btn => {
+                    const cat = btn.dataset.category;
+                    let baseLabel = cat;
+                    if (cat === 'Favorites') baseLabel = '⭐ Favorites';
+                    else if (cat === 'Mains & Entrees') baseLabel = 'Mains';
+                    else if (cat === 'Snacks & Smoothies') baseLabel = 'Snacks';
+                    else if (cat === 'Drinks & Cocktails') baseLabel = 'Drinks';
+                    else if (cat === 'Baking & Bread') baseLabel = 'Baking';
+                    else if (cat === 'Appetizers & Dips') baseLabel = 'Appetizers';
+
+                    const count = counts[cat] || 0;
+                    btn.textContent = count > 0 && cat !== 'All' ? `${baseLabel} (${count})` : (cat === 'All' ? `All (${counts.All})` : baseLabel);
+                });
+            }
+
             function renderRecipes() {
+                updateCategoryBadges();
                 const search = (recipeSearchInput.value || '').toLowerCase();
                 let filtered = allRecipesData.filter(r => {
                     const matchesSearch = r.title.toLowerCase().includes(search) || r.ingredients.toLowerCase().includes(search);
@@ -1787,6 +2144,18 @@
                     }
                     return r.category === activeCategory;
                 });
+
+                // Update results counter
+                const resultsCounter = document.getElementById('recipeResultsCounter');
+                if (resultsCounter) {
+                    if (allRecipesData.length === 0) {
+                        resultsCounter.textContent = '0 recipes';
+                    } else if (filtered.length === allRecipesData.length) {
+                        resultsCounter.textContent = `Showing all ${filtered.length} recipes`;
+                    } else {
+                        resultsCounter.textContent = `Showing ${filtered.length} of ${allRecipesData.length} recipes`;
+                    }
+                }
 
                 // Attach pantry match data
                 filtered.forEach(r => {
@@ -1800,9 +2169,19 @@
 
                 if (filtered.length === 0) {
                     if (allRecipesData.length === 0) {
-                        recipesContainer.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 36px 20px; opacity:0.85; font-size:1.05em;">🍽️ No recipes yet! Use the form above to add your first recipe.</p>';
+                        recipesContainer.innerHTML = `
+                            <div style="grid-column: 1/-1; text-align:center; padding: 45px 20px; background:var(--card-background); border:1px dashed var(--border-color); border-radius:14px;">
+                                <div style="font-size:2.5em; margin-bottom:10px;">🍽️</div>
+                                <h3 style="margin:0 0 8px; color:var(--primary-pink);">Your Cookbook is Fresh & Ready!</h3>
+                                <p style="margin:0 0 16px; opacity:0.85;">No recipes added yet. Create your first custom recipe or import one from the web in 1 click!</p>
+                                <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+                                    <button type="button" class="btn-hub-action btn-hub-add" onclick="window.openRecipeComposer && window.openRecipeComposer()">➕ Add First Recipe</button>
+                                    <button type="button" class="btn-hub-action btn-hub-import" onclick="window.openImportModal && window.openImportModal()">📥 Import from Web</button>
+                                </div>
+                            </div>
+                        `;
                     } else {
-                        recipesContainer.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 20px; opacity:0.85;">No matching recipes found.</p>';
+                        recipesContainer.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 25px; opacity:0.85;">No matching recipes found.</p>';
                     }
                     return;
                 }
@@ -1989,7 +2368,220 @@
                 });
             });
 
-            recipeSearchInput.addEventListener('input', renderRecipes);
+            // Action Hub & Collapsible Composer Form
+            const recipeFormSection = document.getElementById('recipeFormSection');
+            const toggleAddRecipeBtn = document.getElementById('toggleAddRecipeBtn');
+            const closeRecipeFormBtn = document.getElementById('closeRecipeFormBtn');
+            const cancelFormBtn = document.getElementById('cancelFormBtn');
+
+            window.openRecipeComposer = function() {
+                if (!recipeFormSection) return;
+                recipeFormSection.classList.remove('collapsed');
+                const titleInp = document.getElementById('recipeTitle');
+                if (titleInp) titleInp.focus();
+                recipeFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
+
+            function closeRecipeComposer() {
+                if (!recipeFormSection) return;
+                recipeFormSection.classList.add('collapsed');
+                addRecipeForm.reset();
+            }
+
+            if (toggleAddRecipeBtn) {
+                toggleAddRecipeBtn.addEventListener('click', () => {
+                    const isCollapsed = recipeFormSection.classList.contains('collapsed');
+                    if (isCollapsed) {
+                        window.openRecipeComposer();
+                    } else {
+                        closeRecipeComposer();
+                    }
+                });
+            }
+
+            if (closeRecipeFormBtn) closeRecipeFormBtn.addEventListener('click', closeRecipeComposer);
+            if (cancelFormBtn) cancelFormBtn.addEventListener('click', closeRecipeComposer);
+
+            // Search Clear Button & Counter
+            const searchClearBtn = document.getElementById('searchClearBtn');
+            if (searchClearBtn) {
+                searchClearBtn.addEventListener('click', () => {
+                    recipeSearchInput.value = '';
+                    searchClearBtn.style.display = 'none';
+                    renderRecipes();
+                    recipeSearchInput.focus();
+                });
+            }
+
+            recipeSearchInput.addEventListener('input', () => {
+                if (searchClearBtn) {
+                    searchClearBtn.style.display = recipeSearchInput.value ? 'block' : 'none';
+                }
+                renderRecipes();
+            });
+
+            // Recipe Web Importer Modal Logic
+            const importModal = document.getElementById('importRecipeModal');
+            const openImportModalBtn = document.getElementById('openImportModalBtn');
+            const closeImportModalBtn = document.getElementById('closeImportModalBtn');
+            const importUrlInput = document.getElementById('importUrlInput');
+            const fetchImportBtn = document.getElementById('fetchImportBtn');
+            const importSpinnerBox = document.getElementById('importSpinnerBox');
+            const importSpinnerText = document.getElementById('importSpinnerText');
+            const importErrorAlert = document.getElementById('importErrorAlert');
+            const importPreviewCard = document.getElementById('importPreviewCard');
+            const previewTitle = document.getElementById('previewTitle');
+            const previewBadges = document.getElementById('previewBadges');
+            const previewIngredients = document.getElementById('previewIngredients');
+            const editImportedRecipeBtn = document.getElementById('editImportedRecipeBtn');
+            const saveImportedRecipeBtn = document.getElementById('saveImportedRecipeBtn');
+
+            let lastScrapedRecipe = null;
+
+            window.openImportModal = function() {
+                if (!importModal) return;
+                importModal.style.display = 'flex';
+                importUrlInput.value = '';
+                importErrorAlert.style.display = 'none';
+                importPreviewCard.style.display = 'none';
+                importSpinnerBox.style.display = 'none';
+                lastScrapedRecipe = null;
+                setTimeout(() => importUrlInput.focus(), 100);
+            };
+
+            function closeImportModal() {
+                if (!importModal) return;
+                importModal.style.display = 'none';
+            }
+
+            if (openImportModalBtn) openImportModalBtn.addEventListener('click', window.openImportModal);
+            if (closeImportModalBtn) closeImportModalBtn.addEventListener('click', closeImportModal);
+
+            if (importModal) {
+                importModal.addEventListener('click', (e) => {
+                    if (e.target === importModal) closeImportModal();
+                });
+            }
+
+            async function handleFetchRecipe() {
+                const url = importUrlInput.value.trim();
+                if (!url) {
+                    showToast('Please enter a recipe URL', 'error');
+                    importUrlInput.focus();
+                    return;
+                }
+
+                importErrorAlert.style.display = 'none';
+                importPreviewCard.style.display = 'none';
+                importSpinnerBox.style.display = 'block';
+                fetchImportBtn.disabled = true;
+
+                try {
+                    const res = await fetch('/api/recipes/import-url', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url })
+                    });
+
+                    const data = await res.json();
+                    if (!res.ok) {
+                        throw new Error(data.error || 'Failed to import recipe');
+                    }
+
+                    lastScrapedRecipe = data;
+                    renderScrapedPreview(data);
+                } catch (err) {
+                    importErrorAlert.textContent = '❌ ' + (err.message || 'Could not extract recipe from this URL.');
+                    importErrorAlert.style.display = 'block';
+                } finally {
+                    importSpinnerBox.style.display = 'none';
+                    fetchImportBtn.disabled = false;
+                }
+            }
+
+            function renderScrapedPreview(data) {
+                previewTitle.textContent = data.title;
+                previewBadges.innerHTML = `
+                    <span class="category-badge">${escapeHtml(data.category || 'General')}</span>
+                    ${data.prep_time ? `<span class="meta-badge">⏱️ ${escapeHtml(data.prep_time)}</span>` : ''}
+                    ${data.cook_time ? `<span class="meta-badge">🔥 ${escapeHtml(data.cook_time)}</span>` : ''}
+                    <span class="meta-badge diff-badge ${data.difficulty ? data.difficulty.toLowerCase() : 'easy'}">
+                        ${data.difficulty === 'Hard' ? '🔴 Hard' : (data.difficulty === 'Medium' ? '🟡 Medium' : '🟢 Easy')}
+                    </span>
+                    ${data.servings ? `<span class="meta-badge">👥 ${escapeHtml(data.servings)}</span>` : ''}
+                `;
+                previewIngredients.textContent = data.ingredients || '(No ingredients extracted)';
+                importPreviewCard.style.display = 'block';
+            }
+
+            if (fetchImportBtn) fetchImportBtn.addEventListener('click', handleFetchRecipe);
+            if (importUrlInput) {
+                importUrlInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleFetchRecipe();
+                    }
+                });
+            }
+
+            // Edit scraped details first in standard composer
+            if (editImportedRecipeBtn) {
+                editImportedRecipeBtn.addEventListener('click', () => {
+                    if (!lastScrapedRecipe) return;
+                    document.getElementById('recipeTitle').value = lastScrapedRecipe.title || '';
+
+                    const catSelect = document.getElementById('recipeCategory');
+                    if (lastScrapedRecipe.category) {
+                        if (!Array.from(catSelect.options).some(o => o.value === lastScrapedRecipe.category)) {
+                            const opt = document.createElement('option');
+                            opt.value = lastScrapedRecipe.category;
+                            opt.textContent = lastScrapedRecipe.category;
+                            catSelect.appendChild(opt);
+                        }
+                        catSelect.value = lastScrapedRecipe.category;
+                    }
+
+                    document.getElementById('recipePrepTime').value = lastScrapedRecipe.prep_time || '';
+                    document.getElementById('recipeCookTime').value = lastScrapedRecipe.cook_time || '';
+                    document.getElementById('recipeDifficulty').value = lastScrapedRecipe.difficulty || 'Easy';
+                    document.getElementById('recipeServings').value = lastScrapedRecipe.servings || '';
+                    document.getElementById('recipeIngredients').value = lastScrapedRecipe.ingredients || '';
+                    document.getElementById('recipeInstructions').value = lastScrapedRecipe.instructions || '';
+
+                    closeImportModal();
+                    window.openRecipeComposer();
+                    showToast('Recipe loaded into form! Tweak anything and save.', 'info');
+                });
+            }
+
+            // Save directly to cookbook
+            if (saveImportedRecipeBtn) {
+                saveImportedRecipeBtn.addEventListener('click', async () => {
+                    if (!lastScrapedRecipe) return;
+                    saveImportedRecipeBtn.disabled = true;
+                    saveImportedRecipeBtn.textContent = 'Saving...';
+                    try {
+                        const res = await fetch('/api/recipes', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(lastScrapedRecipe)
+                        });
+                        if (res.ok) {
+                            showToast(`🎉 "${lastScrapedRecipe.title}" imported and saved!`, 'success');
+                            closeImportModal();
+                            loadRecipes();
+                        } else {
+                            const err = await res.json();
+                            showToast(err.error || 'Failed to save recipe', 'error');
+                        }
+                    } catch (e) {
+                        showToast('Failed to save recipe', 'error');
+                    } finally {
+                        saveImportedRecipeBtn.disabled = false;
+                        saveImportedRecipeBtn.textContent = '💾 Save to Cookbook';
+                    }
+                });
+            }
 
             // Add recipe form submit
             addRecipeForm.addEventListener('submit', async (e) => {
@@ -2011,7 +2603,7 @@
                     });
                     if (res.ok) {
                         showToast('Recipe added successfully!', 'success');
-                        addRecipeForm.reset();
+                        closeRecipeComposer();
                         loadRecipes();
                     }
                 } catch (err) {

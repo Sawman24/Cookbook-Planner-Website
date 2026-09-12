@@ -1,8 +1,10 @@
 import os
 import re
+import json
 import sqlite3
 from datetime import datetime
 from fractions import Fraction
+import requests
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 
@@ -256,6 +258,272 @@ def consolidate_ingredients(items_list):
             results.append(u)
 
     return results
+
+# --- Recipe Web Scraper Helpers & Endpoints ---
+
+VALID_RECIPE_CATEGORIES = [
+    'General', 'Breakfast', 'Mains & Entrees', 'Soup', 'Sandwich',
+    'Salad', 'Pasta', 'Side Dish', 'Sauce', 'Dressing',
+    'Appetizers & Dips', 'Dessert', 'Baking & Bread',
+    'Snacks & Smoothies', 'Drinks & Cocktails'
+]
+
+def parse_iso_duration(val):
+    """Converts ISO 8601 duration (e.g. PT25M, PT1H30M) or numeric minutes into human-readable strings."""
+    if not val:
+        return ""
+    if isinstance(val, (int, float)):
+        return f"{int(val)} mins"
+    val_str = str(val).strip()
+    if not val_str:
+        return ""
+
+    # ISO 8601 duration matching
+    iso_match = re.match(r'^P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$', val_str, re.IGNORECASE)
+    if iso_match:
+        days, hours, minutes, seconds = iso_match.groups()
+        parts = []
+        if days and int(days) > 0:
+            parts.append(f"{days} day{'s' if int(days) > 1 else ''}")
+        if hours and int(hours) > 0:
+            parts.append(f"{hours} hr{'s' if int(hours) > 1 else ''}")
+        if minutes and int(minutes) > 0:
+            parts.append(f"{minutes} min{'s' if int(minutes) > 1 else ''}")
+        if seconds and int(seconds) > 0 and not hours and not minutes:
+            parts.append(f"{seconds} secs")
+        return " ".join(parts) if parts else ""
+
+    return val_str
+
+def classify_recipe_category(title, raw_category="", text=""):
+    """Intelligently maps raw category or recipe keywords to one of the 15 supported categories."""
+    combined = f"{title} {raw_category} {text}".lower()
+
+    for cat in VALID_RECIPE_CATEGORIES:
+        if cat.lower() in raw_category.lower():
+            return cat
+
+    if any(k in combined for k in ['soup', 'stew', 'chowder', 'chili', 'bisque', 'broth', 'ramen', 'gumbo']):
+        return 'Soup'
+    if any(k in combined for k in ['sandwich', 'burger', 'panini', 'wrap', 'sub', 'toast', 'grilled cheese', 'slider']):
+        return 'Sandwich'
+    if any(k in combined for k in ['salad', 'slaw', 'vinaigrette salad']):
+        return 'Salad'
+    if any(k in combined for k in ['pasta', 'spaghetti', 'fettuccine', 'penne', 'lasagna', 'ravioli', 'macaroni', 'carbonara', 'bolognese', 'gnocchi', 'noodles']):
+        return 'Pasta'
+    if any(k in combined for k in ['pancake', 'waffle', 'omelet', 'egg', 'oatmeal', 'french toast', 'crepe', 'frittata', 'breakfast', 'granola']):
+        return 'Breakfast'
+    if any(k in combined for k in ['cocktail', 'margarita', 'martini', 'drink', 'smoothie', 'latte', 'lemonade', 'punch', 'tea', 'mocktail', 'beverage']):
+        return 'Drinks & Cocktails' if any(k in combined for k in ['cocktail', 'drink', 'martini', 'margarita', 'punch', 'beverage']) else 'Snacks & Smoothies'
+    if any(k in combined for k in ['cookie', 'cake', 'brownie', 'cupcake', 'pie', 'tart', 'pudding', 'ice cream', 'dessert', 'cheesecake', 'tiramisu', 'fudge', 'chocolate', 'frosting']):
+        return 'Dessert'
+    if any(k in combined for k in ['bread', 'biscuit', 'scone', 'muffin', 'focaccia', 'sourdough', 'dough', 'loaf', 'crust', 'bagel', 'roll', 'bun']):
+        return 'Baking & Bread'
+    if any(k in combined for k in ['dressing', 'vinaigrette']):
+        return 'Dressing'
+    if any(k in combined for k in ['sauce', 'salsa', 'gravy', 'marinade', 'pesto', 'mayo', 'aioli', 'glaze']):
+        return 'Sauce'
+    if any(k in combined for k in ['dip', 'appetizer', 'bruschetta', 'nachos', 'wings', 'snack', 'crostini', 'bites', 'tapas']):
+        return 'Appetizers & Dips'
+    if any(k in combined for k in ['chicken', 'beef', 'steak', 'pork', 'salmon', 'fish', 'tacos', 'roast', 'casserole', 'curry', 'stir fry', 'ribs', 'meatball', 'main', 'dinner', 'entree', 'pork chop', 'shrimp']):
+        return 'Mains & Entrees'
+    if any(k in combined for k in ['side', 'potato', 'fries', 'vegetables', 'rice dish', 'green beans', 'asparagus']):
+        return 'Side Dish'
+
+    return 'General'
+
+def extract_recipe_from_url(url):
+    """Scrapes recipe metadata using recipe-scrapers library with Schema.org JSON-LD fallback."""
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+    }
+
+    resp = requests.get(url, headers=headers, timeout=15)
+    resp.raise_for_status()
+    html_content = resp.text
+
+    title = ""
+    ingredients = []
+    instructions = []
+    prep_time = ""
+    cook_time = ""
+    servings = ""
+    category = "General"
+
+    # Strategy 1: recipe-scrapers library
+    try:
+        from recipe_scrapers import scrape_html
+        scraper = scrape_html(html_content, org_url=url)
+        title = scraper.title() or ""
+        ingredients = scraper.ingredients() or []
+
+        try:
+            raw_instr = scraper.instructions()
+            if isinstance(raw_instr, str):
+                instructions = [line.strip() for line in raw_instr.split('\n') if line.strip()]
+            elif isinstance(raw_instr, list):
+                instructions = [str(x).strip() for x in raw_instr if str(x).strip()]
+        except Exception:
+            pass
+
+        try:
+            p_min = scraper.prep_time()
+            if p_min:
+                prep_time = f"{p_min} mins"
+        except Exception:
+            pass
+
+        try:
+            c_min = scraper.cook_time()
+            if c_min:
+                cook_time = f"{c_min} mins"
+        except Exception:
+            pass
+
+        try:
+            servings = str(scraper.yields() or "")
+        except Exception:
+            pass
+
+        try:
+            raw_cat = scraper.category() or ""
+            category = classify_recipe_category(title, raw_cat, " ".join(ingredients))
+        except Exception:
+            category = classify_recipe_category(title, "", " ".join(ingredients))
+
+    except Exception:
+        pass
+
+    # Strategy 2: Manual BeautifulSoup JSON-LD Schema.org / OpenGraph parser
+    if not title or not ingredients:
+        try:
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(html_content, 'html.parser')
+
+            # Search JSON-LD scripts
+            scripts = soup.find_all('script', type='application/ld+json')
+            for s in scripts:
+                if not s.string:
+                    continue
+                try:
+                    data = json.loads(s.string)
+                    recipes_found = []
+                    if isinstance(data, dict):
+                        if data.get('@type') == 'Recipe' or 'Recipe' in str(data.get('@type', '')):
+                            recipes_found.append(data)
+                        elif '@graph' in data:
+                            for item in data['@graph']:
+                                if isinstance(item, dict) and (item.get('@type') == 'Recipe' or 'Recipe' in str(item.get('@type', ''))):
+                                    recipes_found.append(item)
+                    elif isinstance(data, list):
+                        for item in data:
+                            if isinstance(item, dict) and (item.get('@type') == 'Recipe' or 'Recipe' in str(item.get('@type', ''))):
+                                recipes_found.append(item)
+
+                    if recipes_found:
+                        r = recipes_found[0]
+                        if not title:
+                            title = r.get('name') or r.get('headline') or ''
+                        if not ingredients and 'recipeIngredient' in r:
+                            raw_ing = r['recipeIngredient']
+                            if isinstance(raw_ing, list):
+                                ingredients = [str(x).strip() for x in raw_ing if str(x).strip()]
+                            elif isinstance(raw_ing, str):
+                                ingredients = [line.strip() for line in raw_ing.split('\n') if line.strip()]
+
+                        if not instructions and 'recipeInstructions' in r:
+                            raw_inst = r['recipeInstructions']
+                            if isinstance(raw_inst, list):
+                                for step in raw_inst:
+                                    if isinstance(step, dict):
+                                        if 'text' in step:
+                                            instructions.append(step['text'].strip())
+                                        elif 'itemListElement' in step:
+                                            for sub in step['itemListElement']:
+                                                if isinstance(sub, dict) and 'text' in sub:
+                                                    instructions.append(sub['text'].strip())
+                                    elif isinstance(step, str):
+                                        instructions.append(step.strip())
+                            elif isinstance(raw_inst, str):
+                                instructions = [line.strip() for line in raw_inst.split('\n') if line.strip()]
+
+                        if not prep_time and 'prepTime' in r:
+                            prep_time = parse_iso_duration(r['prepTime'])
+                        if not cook_time and 'cookTime' in r:
+                            cook_time = parse_iso_duration(r['cookTime'])
+                        if not servings and ('recipeYield' in r or 'yield' in r):
+                            y = r.get('recipeYield') or r.get('yield')
+                            if isinstance(y, list) and y:
+                                servings = str(y[0])
+                            else:
+                                servings = str(y) if y else ""
+                        if 'recipeCategory' in r:
+                            cat = r['recipeCategory']
+                            cat_str = ", ".join(cat) if isinstance(cat, list) else str(cat)
+                            category = classify_recipe_category(title, cat_str, " ".join(ingredients))
+                        break
+                except Exception:
+                    continue
+
+            if not title and soup.title:
+                title = soup.title.string.split('|')[0].split('-')[0].strip()
+        except Exception:
+            pass
+
+    if not title:
+        raise ValueError("Could not automatically detect recipe information from this URL. Please verify the URL or enter the recipe manually.")
+
+    # Format ingredient list
+    formatted_ingredients = "\n".join([f"- {ing.lstrip('-*• ')}" for ing in ingredients]) if ingredients else ""
+
+    # Format numbered instructions
+    formatted_instructions = []
+    for i, step in enumerate(instructions, 1):
+        step_clean = re.sub(r'^\d+[\.\)]\s*', '', step).strip()
+        if step_clean:
+            formatted_instructions.append(f"{i}) {step_clean}")
+    formatted_instructions_text = "\n\n".join(formatted_instructions) if formatted_instructions else "\n".join(instructions)
+
+    # Estimate difficulty
+    difficulty = "Easy"
+    if len(instructions) > 8 or len(ingredients) > 12:
+        difficulty = "Hard"
+    elif len(instructions) > 4 or len(ingredients) > 7:
+        difficulty = "Medium"
+
+    return {
+        'title': title.strip(),
+        'ingredients': formatted_ingredients.strip(),
+        'instructions': formatted_instructions_text.strip(),
+        'prep_time': prep_time.strip(),
+        'cook_time': cook_time.strip(),
+        'servings': servings.strip(),
+        'difficulty': difficulty,
+        'category': category or 'General',
+        'source_url': url
+    }
+
+@app.route('/api/recipes/import-url', methods=['POST'])
+def import_recipe_from_url():
+    data = request.get_json()
+    if not data or 'url' not in data:
+        return jsonify({'error': 'URL is required'}), 400
+
+    url = data['url'].strip()
+    if not url.startswith('http://') and not url.startswith('https://'):
+        url = 'https://' + url
+
+    try:
+        recipe_data = extract_recipe_from_url(url)
+        return jsonify(recipe_data), 200
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': f'Could not reach website ({str(e)})'}), 400
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 422
+    except Exception as e:
+        return jsonify({'error': f'Failed to scrape recipe: {str(e)}'}), 500
 
 # --- Recipe Endpoints ---
 
