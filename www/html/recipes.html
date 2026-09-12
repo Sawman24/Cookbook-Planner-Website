@@ -2348,7 +2348,8 @@
                 // Cook Mode
                 document.querySelectorAll('.btn-cook').forEach(b => {
                     b.addEventListener('click', (e) => {
-                        const id = parseInt(e.target.dataset.cookId);
+                        const btn = e.currentTarget;
+                        const id = parseInt(btn.dataset.cookId);
                         openCookMode(id);
                     });
                 });
@@ -2356,7 +2357,8 @@
                 // Edit
                 document.querySelectorAll('.btn-edit').forEach(b => {
                     b.addEventListener('click', (e) => {
-                        const id = parseInt(e.target.dataset.editId);
+                        const btn = e.currentTarget;
+                        const id = parseInt(btn.dataset.editId);
                         openEditModal(id);
                     });
                 });
@@ -2364,7 +2366,8 @@
                 // Delete
                 document.querySelectorAll('.btn-delete').forEach(b => {
                     b.addEventListener('click', async (e) => {
-                        const id = parseInt(e.target.dataset.delId);
+                        const btn = e.currentTarget;
+                        const id = parseInt(btn.dataset.delId);
                         const rec = allRecipesData.find(r => r.id === id);
                         if (confirm(`Are you sure you want to delete "${rec ? rec.title : 'this recipe'}"?`)) {
                             const res = await fetch(`/api/recipes/${id}`, { method: 'DELETE' });
@@ -2885,45 +2888,53 @@
             function openCookMode(id) {
                 const rec = allRecipesData.find(r => r.id === id);
                 if (!rec) return;
+
+                const scale = (typeof recipeScales !== 'undefined' && recipeScales[rec.id]) ? recipeScales[rec.id] : 1;
+                const scaledIngr = (typeof scaleIngredients === 'function') ? scaleIngredients(rec.ingredients, scale) : rec.ingredients;
+
                 let metaParts = [];
                 if (rec.prep_time) metaParts.push(`⏱️ Prep: ${escapeHtml(rec.prep_time)}`);
                 if (rec.cook_time) metaParts.push(`🔥 Cook: ${escapeHtml(rec.cook_time)}`);
                 if (rec.difficulty) metaParts.push(`🏷️ ${escapeHtml(rec.difficulty)}`);
                 if (rec.servings) metaParts.push(`👥 ${escapeHtml(rec.servings)}`);
                 const metaSummary = metaParts.length > 0 ? ` <span style="font-size:0.65em; opacity:0.85; font-weight:normal; margin-left:8px;">(${metaParts.join(' • ')})</span>` : '';
-                cookTitle.innerHTML = `🍳 ${escapeHtml(rec.title)} (${scale}x)${metaSummary}`;
+                
+                const scaleNotice = scale !== 1 ? ` (${scale}x)` : '';
+                if (cookTitle) cookTitle.innerHTML = `🍳 ${escapeHtml(rec.title)}${scaleNotice}${metaSummary}`;
                 currentRecipeSteps = parseInstructionSteps(rec.instructions);
                 currentStepIdx = 0;
                 completedStepIndices = new Set();
                 completedIngrIndices = new Set();
                 cookFontScale = 1.0;
-                cookBody.style.fontSize = '1em';
+                if (cookBody) cookBody.style.fontSize = '1em';
 
                 // Render Ingredients Checklist
-                const ingrLines = scaledIngr.split('\n').map(l => l.trim()).filter(Boolean);
-                ingrCountBadge.textContent = `(${ingrLines.length} items)`;
+                const ingrLines = (scaledIngr || '').split('\n').map(l => l.trim()).filter(Boolean);
+                if (ingrCountBadge) ingrCountBadge.textContent = `(${ingrLines.length} items)`;
 
-                cookIngredientsList.innerHTML = ingrLines.map((line, idx) => `
-                    <div class="cook-ingr-item" data-ingr-idx="${idx}">
-                        <input type="checkbox" class="cook-ingr-checkbox" data-ingr-idx="${idx}">
-                        <span>${escapeHtml(line.replace(/^[-*•]\s*/, ''))}</span>
-                    </div>
-                `).join('');
+                if (cookIngredientsList) {
+                    cookIngredientsList.innerHTML = ingrLines.map((line, idx) => `
+                        <div class="cook-ingr-item" data-ingr-idx="${idx}">
+                            <input type="checkbox" class="cook-ingr-checkbox" data-ingr-idx="${idx}">
+                            <span>${escapeHtml(line.replace(/^[-*•]\s*/, ''))}</span>
+                        </div>
+                    `).join('');
 
-                cookIngredientsList.querySelectorAll('.cook-ingr-item').forEach(el => {
-                    el.addEventListener('click', (e) => {
-                        const idx = parseInt(el.dataset.ingrIdx);
-                        const chk = el.querySelector('input');
-                        if (e.target !== chk) chk.checked = !chk.checked;
-                        if (chk.checked) {
-                            completedIngrIndices.add(idx);
-                            el.classList.add('checked');
-                        } else {
-                            completedIngrIndices.delete(idx);
-                            el.classList.remove('checked');
-                        }
+                    cookIngredientsList.querySelectorAll('.cook-ingr-item').forEach(el => {
+                        el.addEventListener('click', (e) => {
+                            const idx = parseInt(el.dataset.ingrIdx);
+                            const chk = el.querySelector('input');
+                            if (e.target !== chk) chk.checked = !chk.checked;
+                            if (chk.checked) {
+                                completedIngrIndices.add(idx);
+                                el.classList.add('checked');
+                            } else {
+                                completedIngrIndices.delete(idx);
+                                el.classList.remove('checked');
+                            }
+                        });
                     });
-                });
+                }
 
                 // Render All Steps list
                 renderAllStepsList();
@@ -2932,8 +2943,10 @@
                 renderCurrentStep();
                 switchCookView('focus');
 
-                cookModal.style.display = 'block';
-                document.body.style.overflow = 'hidden'; // prevent background scrolling
+                if (cookModal) {
+                    cookModal.style.display = 'block';
+                    document.body.style.overflow = 'hidden'; // prevent background scrolling
+                }
                 requestWakeLock();
             }
 
