@@ -5,6 +5,7 @@ import sqlite3
 from datetime import datetime
 from fractions import Fraction
 import requests
+from bs4 import BeautifulSoup
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 
@@ -335,28 +336,50 @@ def classify_recipe_category(title, raw_category="", text=""):
     return 'General'
 
 def fetch_recipe_html(url):
-    """Fetches recipe HTML with realistic browser headers and automatic proxy fallback for bot-protected (403/Akamai/Cloudflare) websites."""
+    """Fetches raw HTML from a recipe URL with realistic browser headers and automatic proxy fallback for bot-protected websites."""
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
         'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate',
+        'Sec-Ch-Ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
     }
 
-    # Step 1: Try direct fetch
+    # Step 1: Direct fetch with standard browser session
     try:
-        resp = requests.get(url, headers=headers, timeout=10)
-        if resp.status_code == 200 and len(resp.text) > 500:
-            lowered = resp.text[:1200].lower()
-            if not any(x in lowered for x in ['access denied', '403 forbidden', 'cloudflare', 'edgesuite.net', 'just a moment...']):
+        session = requests.Session()
+        resp = session.get(url, headers=headers, timeout=12, allow_redirects=True)
+        if resp.status_code == 200 and len(resp.text) > 400:
+            lowered = resp.text[:2500].lower()
+            # Only trigger proxy fallback on genuine bot-blocker / challenge pages
+            is_challenge = any(x in lowered for x in [
+                '<title>just a moment...</title>',
+                '<title>access denied</title>',
+                '<title>attention required! | cloudflare</title>',
+                '<title>403 forbidden</title>',
+                '<title>robot or human?</title>',
+                '<title>security check</title>',
+                'action="/_bm/_data"',
+                'cf-browser-verification',
+                'id="challenge-running"'
+            ])
+            if not is_challenge:
                 return resp.text
     except Exception:
         pass
 
-    # Step 2: Fallback to Jina Reader proxy with HTML output (bypasses Akamai/Cloudflare EdgeSuite)
+    # Step 2: Fallback to Jina Reader proxy with HTML output (bypasses Akamai/Cloudflare EdgeSuite like Food Network)
     jina_url = f"https://r.jina.ai/{url}"
     try:
         resp = requests.get(jina_url, headers={'User-Agent': 'Mozilla/5.0', 'X-Return-Format': 'html'}, timeout=15)
-        if resp.status_code == 200 and len(resp.text) > 500:
+        if resp.status_code == 200 and len(resp.text) > 400:
             return resp.text
     except Exception:
         pass
@@ -369,13 +392,19 @@ def fetch_recipe_html(url):
     except Exception:
         pass
 
-    # Step 4: Re-run direct request to get exact HTTP error if proxy is unreachable
-    resp = requests.get(url, headers=headers, timeout=12)
+    # Step 4: Re-run direct request to raise descriptive HTTP error if website was completely unreachable
+    resp = requests.get(url, headers=headers, timeout=12, allow_redirects=True)
     resp.raise_for_status()
     return resp.text
 
 def extract_recipe_from_url(url, raw_content=None):
-    """Scrapes recipe metadata using recipe-scrapers library with Schema.org JSON-LD and Markdown fallbacks."""
+    """
+    Extracts recipe metadata from URL or raw content using a multi-strategy engine:
+    1. recipe-scrapers library (scrape_me / scrape_html with wild_mode=True)
+    2. Deep BeautifulSoup Schema.org JSON-LD parser (supports nested @graph, HowToStep, HowToSection)
+    3. Microdata & Recipe Plugin DOM selectors (WP Recipe Maker, Tasty Recipes, Create by Mediavine, etc.)
+    4. Markdown & plaintext regex fallback
+    """
     html_content = raw_content if raw_content else fetch_recipe_html(url)
 
     title = ""
@@ -386,39 +415,73 @@ def extract_recipe_from_url(url, raw_content=None):
     servings = ""
     category = "General"
 
-    # Strategy 1: recipe-scrapers library (if HTML content)
-    if "<" in html_content and ">" in html_content:
-        try:
-            from recipe_scrapers import scrape_html
-            scraper = scrape_html(html_content, org_url=url)
-            title = scraper.title() or ""
-            ingredients = scraper.ingredients() or []
-
+    # Strategy 1: recipe-scrapers library (Primary extractor for 150+ sites + schema.org)
+    try:
+        from recipe_scrapers import scrape_html, scrape_me
+        scraper = None
+        if "<" in html_content and ">" in html_content:
             try:
-                raw_instr = scraper.instructions()
-                if isinstance(raw_instr, str):
-                    instructions = [line.strip() for line in raw_instr.split('\n') if line.strip()]
-                elif isinstance(raw_instr, list):
-                    instructions = [str(x).strip() for x in raw_instr if str(x).strip()]
+                scraper = scrape_html(html_content, org_url=url, wild_mode=True)
+            except Exception:
+                scraper = None
+
+        if scraper is None and not raw_content:
+            try:
+                scraper = scrape_me(url, wild_mode=True)
+            except Exception:
+                scraper = None
+
+        if scraper:
+            try:
+                t = scraper.title()
+                if t:
+                    title = str(t).strip()
             except Exception:
                 pass
 
             try:
-                p_min = scraper.prep_time()
-                if p_min:
-                    prep_time = f"{p_min} mins"
+                ings = scraper.ingredients()
+                if ings:
+                    ingredients = [str(x).strip() for x in ings if str(x).strip()]
             except Exception:
                 pass
 
             try:
-                c_min = scraper.cook_time()
-                if c_min:
-                    cook_time = f"{c_min} mins"
+                if hasattr(scraper, 'instructions_list'):
+                    inst_list = scraper.instructions_list()
+                    if inst_list:
+                        instructions = [str(x).strip() for x in inst_list if str(x).strip()]
+                if not instructions:
+                    raw_inst = scraper.instructions()
+                    if isinstance(raw_inst, str) and raw_inst.strip():
+                        instructions = [line.strip() for line in raw_inst.split('\n') if line.strip()]
+                    elif isinstance(raw_inst, list):
+                        instructions = [str(x).strip() for x in raw_inst if str(x).strip()]
             except Exception:
                 pass
 
             try:
-                servings = str(scraper.yields() or "")
+                p = scraper.prep_time()
+                if p:
+                    prep_time = f"{int(p)} mins" if isinstance(p, (int, float)) else parse_iso_duration(p)
+            except Exception:
+                pass
+
+            try:
+                c = scraper.cook_time()
+                if c:
+                    cook_time = f"{int(c)} mins" if isinstance(c, (int, float)) else parse_iso_duration(c)
+                if not cook_time:
+                    tot = scraper.total_time()
+                    if tot:
+                        cook_time = f"{int(tot)} mins" if isinstance(tot, (int, float)) else parse_iso_duration(tot)
+            except Exception:
+                pass
+
+            try:
+                y = scraper.yields()
+                if y:
+                    servings = str(y).strip()
             except Exception:
                 pass
 
@@ -426,110 +489,172 @@ def extract_recipe_from_url(url, raw_content=None):
                 raw_cat = scraper.category() or ""
                 category = classify_recipe_category(title, raw_cat, " ".join(ingredients))
             except Exception:
-                category = classify_recipe_category(title, "", " ".join(ingredients))
+                pass
+    except Exception:
+        pass
 
+    # Strategy 2: Deep BeautifulSoup JSON-LD Schema.org parser
+    if not title or not ingredients or not instructions:
+        try:
+            soup = BeautifulSoup(html_content, 'html.parser')
+            scripts = soup.find_all('script', type=re.compile(r'application/ld\+json', re.I))
+
+            recipe_nodes = []
+            def search_nodes(node):
+                if isinstance(node, dict):
+                    t = node.get('@type')
+                    if t == 'Recipe' or (isinstance(t, list) and 'Recipe' in t) or (isinstance(t, str) and 'recipe' in t.lower()):
+                        recipe_nodes.append(node)
+                    if '@graph' in node and isinstance(node['@graph'], list):
+                        for sub in node['@graph']:
+                            search_nodes(sub)
+                    if 'mainEntity' in node:
+                        search_nodes(node['mainEntity'])
+                elif isinstance(node, list):
+                    for item in node:
+                        search_nodes(item)
+
+            for s in scripts:
+                content = s.string or s.get_text() or ''
+                if not content.strip():
+                    continue
+                try:
+                    parsed_json = json.loads(content.strip())
+                    search_nodes(parsed_json)
+                except Exception:
+                    continue
+
+            for r in recipe_nodes:
+                if not title:
+                    title = r.get('name') or r.get('headline') or ''
+
+                if not ingredients and 'recipeIngredient' in r:
+                    raw_ing = r['recipeIngredient']
+                    if isinstance(raw_ing, list):
+                        ingredients = [str(x).strip() for x in raw_ing if str(x).strip()]
+                    elif isinstance(raw_ing, str):
+                        ingredients = [line.strip() for line in raw_ing.split('\n') if line.strip()]
+
+                if not instructions and 'recipeInstructions' in r:
+                    raw_inst = r['recipeInstructions']
+                    if isinstance(raw_inst, list):
+                        for step in raw_inst:
+                            if isinstance(step, dict):
+                                if 'itemListElement' in step and isinstance(step['itemListElement'], list):
+                                    for sub_step in step['itemListElement']:
+                                        if isinstance(sub_step, dict) and 'text' in sub_step:
+                                            instructions.append(str(sub_step['text']).strip())
+                                        elif isinstance(sub_step, str):
+                                            instructions.append(sub_step.strip())
+                                elif 'text' in step:
+                                    instructions.append(str(step['text']).strip())
+                            elif isinstance(step, str):
+                                instructions.append(step.strip())
+                    elif isinstance(raw_inst, str):
+                        instructions = [line.strip() for line in raw_inst.split('\n') if line.strip()]
+
+                if not prep_time and 'prepTime' in r:
+                    prep_time = parse_iso_duration(r['prepTime'])
+
+                if not cook_time:
+                    if 'cookTime' in r:
+                        cook_time = parse_iso_duration(r['cookTime'])
+                    elif 'totalTime' in r:
+                        cook_time = parse_iso_duration(r['totalTime'])
+
+                if not servings and ('recipeYield' in r or 'yield' in r):
+                    y = r.get('recipeYield') or r.get('yield')
+                    servings = str(y[0]) if isinstance(y, list) and y else str(y or '')
+
+                if category == 'General' and 'recipeCategory' in r:
+                    cat_val = r['recipeCategory']
+                    cat_str = ", ".join(cat_val) if isinstance(cat_val, list) else str(cat_val)
+                    category = classify_recipe_category(title, cat_str, " ".join(ingredients))
+
+                if title and ingredients and instructions:
+                    break
         except Exception:
             pass
 
-    # Strategy 2: Manual JSON-LD Schema.org parser
-    if not title or not ingredients:
-        json_ld_matches = re.findall(r'<script[^>]+type=[\"\']application/ld\+json[\"\'][^>]*>(.*?)</script>', html_content, re.DOTALL | re.I)
-        for raw_json in json_ld_matches:
-            try:
-                data = json.loads(raw_json.strip())
-                recipes_found = []
-                if isinstance(data, dict):
-                    if data.get('@type') == 'Recipe' or 'Recipe' in str(data.get('@type', '')):
-                        recipes_found.append(data)
-                    elif '@graph' in data:
-                        for item in data['@graph']:
-                            if isinstance(item, dict) and (item.get('@type') == 'Recipe' or 'Recipe' in str(item.get('@type', ''))):
-                                recipes_found.append(item)
-                elif isinstance(data, list):
-                    for item in data:
-                        if isinstance(item, dict) and (item.get('@type') == 'Recipe' or 'Recipe' in str(item.get('@type', ''))):
-                            recipes_found.append(item)
+    # Strategy 3: Microdata & Recipe Plugin HTML DOM Parser (WordPress Recipe Maker, Tasty, Mediavine Create, etc.)
+    if not title or not ingredients or not instructions:
+        try:
+            soup = BeautifulSoup(html_content, 'html.parser')
 
-                if recipes_found:
-                    r = recipes_found[0]
-                    if not title:
-                        title = r.get('name') or r.get('headline') or ''
-                    if not ingredients and 'recipeIngredient' in r:
-                        raw_ing = r['recipeIngredient']
-                        if isinstance(raw_ing, list):
-                            ingredients = [str(x).strip() for x in raw_ing if str(x).strip()]
-                        elif isinstance(raw_ing, str):
-                            ingredients = [line.strip() for line in raw_ing.split('\n') if line.strip()]
+            if not title:
+                t_el = soup.select_one('[itemprop="name"], .recipe-title, .wprm-recipe-name, .tasty-recipes-title, .mv-create-title, h1.entry-title, h1')
+                if t_el:
+                    title = t_el.get_text().strip()
 
-                    if not instructions and 'recipeInstructions' in r:
-                        raw_inst = r['recipeInstructions']
-                        if isinstance(raw_inst, list):
-                            for step in raw_inst:
-                                if isinstance(step, dict):
-                                    if 'text' in step:
-                                        instructions.append(step['text'].strip())
-                                    elif 'itemListElement' in step:
-                                        for sub in step['itemListElement']:
-                                            if isinstance(sub, dict) and 'text' in sub:
-                                                instructions.append(sub['text'].strip())
-                                elif isinstance(step, str):
-                                    instructions.append(step.strip())
-                        elif isinstance(raw_inst, str):
-                            instructions = [line.strip() for line in raw_inst.split('\n') if line.strip()]
+            if not ingredients:
+                ing_els = soup.select('[itemprop="recipeIngredient"], [itemprop="ingredients"], .wprm-recipe-ingredient, .tasty-recipes-ingredients li, .mv-create-ingredients li, .recipe-ingredients li, ul.recipe-ingredients li, .ingredients-item')
+                if ing_els:
+                    ingredients = [el.get_text().strip() for el in ing_els if el.get_text().strip()]
 
-                    if not prep_time and 'prepTime' in r:
-                        prep_time = parse_iso_duration(r['prepTime'])
-                    if not cook_time and 'cookTime' in r:
-                        cook_time = parse_iso_duration(r['cookTime'])
-                    if not cook_time and 'totalTime' in r:
-                        cook_time = parse_iso_duration(r['totalTime'])
-                    if not servings and ('recipeYield' in r or 'yield' in r):
-                        y = r.get('recipeYield') or r.get('yield')
-                        servings = str(y[0]) if isinstance(y, list) and y else str(y or '')
-                    if 'recipeCategory' in r:
-                        cat = r['recipeCategory']
-                        cat_str = ", ".join(cat) if isinstance(cat, list) else str(cat)
-                        category = classify_recipe_category(title, cat_str, " ".join(ingredients))
-                    break
-            except Exception:
-                continue
+            if not instructions:
+                inst_els = soup.select('[itemprop="recipeInstructions"], .wprm-recipe-instruction-text, .tasty-recipes-instructions li, .mv-create-instructions li, .recipe-instructions li, ol.recipe-instructions li, .instructions-section li, .direction-step')
+                if inst_els:
+                    instructions = [el.get_text().strip() for el in inst_els if el.get_text().strip()]
 
-    # Strategy 3: Markdown parser fallback (if content was scraped as markdown text)
-    if not title or not ingredients:
-        title_match = re.search(r'^Title:\s*(.+)$', html_content, re.MULTILINE)
+            if not prep_time:
+                p_el = soup.select_one('.wprm-recipe-prep-time-container, .tasty-recipes-prep-time, [itemprop="prepTime"]')
+                if p_el:
+                    prep_time = parse_iso_duration(p_el.get_text().strip())
+
+            if not cook_time:
+                c_el = soup.select_one('.wprm-recipe-cook-time-container, .tasty-recipes-cook-time, [itemprop="cookTime"]')
+                if c_el:
+                    cook_time = parse_iso_duration(c_el.get_text().strip())
+
+            if not servings:
+                s_el = soup.select_one('.wprm-recipe-servings, .tasty-recipes-yield, [itemprop="recipeYield"]')
+                if s_el:
+                    servings = s_el.get_text().strip()
+        except Exception:
+            pass
+
+    # Strategy 4: Markdown / Plaintext Fallback Parser
+    if not title or not ingredients or not instructions:
+        title_match = re.search(r'^(?:#\s*|Title:\s*)(.+)$', html_content, re.MULTILINE)
         if title_match and not title:
             title = title_match.group(1).strip()
 
         if not ingredients:
-            ing_matches = re.findall(r'^\s*-\s*\[[ xX]\]\s*(.+)$', html_content, re.MULTILINE)
-            clean_ings = [m.strip() for m in ing_matches if not any(x in m.lower() for x in ['deselect', 'cookie', 'privacy', 'personal information', 'shopping list', 'cook mode'])]
+            ing_matches = re.findall(r'^\s*(?:-\s*\[[ xX]\]|[-*•])\s*(.+)$', html_content, re.MULTILINE)
+            clean_ings = [m.strip() for m in ing_matches if not any(x in m.lower() for x in ['deselect', 'cookie', 'privacy', 'personal information', 'shopping list', 'cook mode', 'advertisement', 'share', 'print', 'pin recipe'])]
             if clean_ings:
                 ingredients = clean_ings
 
         if not instructions:
-            dir_sec = re.search(r'###\s*(?:Directions|Instructions|Steps|Preparation)\s*\n(.*?)(?:####|###|$)', html_content, re.DOTALL | re.I)
+            dir_sec = re.search(r'###?\s*(?:Directions|Instructions|Steps|Preparation|Method)\s*\n(.*?)(?:###?|$)', html_content, re.DOTALL | re.I)
             if dir_sec:
                 for l in dir_sec.group(1).split('\n'):
                     l = l.strip()
                     if not l or l.startswith('![') or l.startswith('[Watch') or 'watch how' in l.lower():
                         continue
-                    cleaned = re.sub(r'^\d+[\.\)]\s*', '', l).strip()
+                    cleaned = re.sub(r'^(?:\d+[\.\)]|step\s+\d+[:\.]?|[-*•])\s*', '', l, flags=re.I).strip()
                     if cleaned:
                         instructions.append(cleaned)
 
+    # Strategy 5: HTML Document <title> fallback
     if not title:
         title_match = re.search(r'<title>(.*?)</title>', html_content, re.I)
         if title_match:
-            title = title_match.group(1).split('|')[0].split('-')[0].strip()
+            title = title_match.group(1).split('|')[0].split(' - ')[0].split(' – ')[0].strip()
 
-    if not title:
+    if not title or not (ingredients or instructions):
         raise ValueError("Could not automatically detect recipe information from this URL. Please verify the URL or enter the recipe manually.")
 
     # Clean and format ingredient list
     clean_ing_list = []
     for ing in ingredients:
         cleaned = re.sub(r'[\xa0\u200b]+', ' ', ing).strip().lstrip('-*• ')
-        if cleaned and not any(x in cleaned.lower() for x in ['deselect all', 'add to shopping list', 'view shopping list', 'cook mode (keep screen awake)']):
+        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+        if cleaned and not any(x in cleaned.lower() for x in [
+            'deselect all', 'add to shopping list', 'view shopping list',
+            'cook mode (keep screen awake)', 'advertisement', 'nutrition facts',
+            'yield:', 'prep time:', 'cook time:', 'total time:'
+        ]):
             clean_ing_list.append(cleaned)
 
     formatted_ingredients = "\n".join([f"- {ing}" for ing in clean_ing_list]) if clean_ing_list else ""
@@ -538,16 +663,20 @@ def extract_recipe_from_url(url, raw_content=None):
     formatted_instructions = []
     for i, step in enumerate(instructions, 1):
         step_clean = re.sub(r'[\xa0\u200b]+', ' ', step).strip()
-        step_clean = re.sub(r'^\d+[\.\)]\s*', '', step_clean).strip()
-        if step_clean and not step_clean.startswith('![') and not step_clean.startswith('[Watch'):
+        step_clean = re.sub(r'^(?:\d+[\.\)]|step\s+\d+[:\.]?|[-*•])\s*', '', step_clean, flags=re.I).strip()
+        step_clean = re.sub(r'\s+', ' ', step_clean).strip()
+        if step_clean and not step_clean.startswith('![') and not step_clean.startswith('[Watch') and 'watch how' not in step_clean.lower():
             formatted_instructions.append(f"{i}) {step_clean}")
     formatted_instructions_text = "\n\n".join(formatted_instructions) if formatted_instructions else "\n".join(instructions)
 
+    # Recalculate category with all available data
+    final_category = classify_recipe_category(title, category, " ".join(clean_ing_list) + " " + formatted_instructions_text)
+
     # Estimate difficulty
     difficulty = "Easy"
-    if len(instructions) > 8 or len(clean_ing_list) > 12:
+    if len(formatted_instructions) > 8 or len(clean_ing_list) > 12:
         difficulty = "Hard"
-    elif len(instructions) > 4 or len(clean_ing_list) > 7:
+    elif len(formatted_instructions) > 4 or len(clean_ing_list) > 7:
         difficulty = "Medium"
 
     return {
@@ -558,7 +687,7 @@ def extract_recipe_from_url(url, raw_content=None):
         'cook_time': cook_time.strip(),
         'servings': servings.strip(),
         'difficulty': difficulty,
-        'category': category or 'General',
+        'category': final_category,
         'source_url': url
     }
 
