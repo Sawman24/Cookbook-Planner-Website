@@ -408,7 +408,16 @@ def fetch_recipe_html(url):
         except Exception:
             pass
 
-    # Step 2: Fallback to Jina Reader proxy with HTML output (bypasses Akamai/Cloudflare EdgeSuite like Food Network)
+    # Step 2: Google Residential Proxy Mirror (Bypasses Datacenter IP 403 on Linux Ubuntu Servers for Allrecipes, Dotdash Meredith, NYT, Cloudflare blogs)
+    gt_url = f"https://translate.google.com/translate?sl=auto&tl=en&u={url}"
+    try:
+        resp = requests.get(gt_url, headers=header_variants[1], timeout=10)
+        if resp.status_code == 200 and len(resp.text) > 1000:
+            return resp.text
+    except Exception:
+        pass
+
+    # Step 3: Fallback to Jina Reader proxy with HTML output (bypasses Akamai/Cloudflare EdgeSuite like Food Network)
     jina_url = f"https://r.jina.ai/{url}"
     try:
         resp = requests.get(jina_url, headers={'User-Agent': 'Mozilla/5.0', 'X-Return-Format': 'html'}, timeout=15)
@@ -417,7 +426,7 @@ def fetch_recipe_html(url):
     except Exception:
         pass
 
-    # Step 3: Final attempt with standard Jina markdown text
+    # Step 4: Final attempt with standard Jina markdown text
     try:
         resp = requests.get(jina_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
         if resp.status_code == 200 and len(resp.text) > 200:
@@ -425,7 +434,15 @@ def fetch_recipe_html(url):
     except Exception:
         pass
 
-    # Step 4: Re-run direct request to raise descriptive HTTP error if website was completely unreachable
+    # Step 5: Public Web Proxy Mirror
+    try:
+        resp = requests.get(f"https://api.allorigins.win/raw?url={requests.utils.quote(url)}", headers={'User-Agent': 'Mozilla/5.0'}, timeout=8)
+        if resp.status_code == 200 and len(resp.text) > 500:
+            return resp.text
+    except Exception:
+        pass
+
+    # Step 6: Re-run direct request to raise descriptive HTTP error if website was completely unreachable
     resp = requests.get(url, headers=header_variants[0], timeout=12, allow_redirects=True)
     resp.raise_for_status()
     return resp.text

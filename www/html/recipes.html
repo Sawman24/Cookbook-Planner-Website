@@ -1659,6 +1659,25 @@
                 </button>
             </div>
 
+            <div style="text-align:center; margin: 8px 0 12px;">
+                <button type="button" id="togglePasteTextBtn" style="background:none; border:none; color:var(--primary-pink); font-size:0.85em; font-weight:600; cursor:pointer; text-decoration:underline;">
+                    📋 Or Paste Recipe Text / Page Directly
+                </button>
+            </div>
+
+            <!-- Direct Text / HTML Paste Area (Fallback) -->
+            <div id="pasteTextContainer" style="display:none; margin-bottom:14px; background:var(--background-color); border:1px dashed var(--border-color); border-radius:10px; padding:12px;">
+                <label for="importRawTextInput" style="font-size:0.84em; font-weight:600; display:block; margin-bottom:6px; color:var(--primary-pink);">
+                    Paste recipe title, ingredients, and instructions (or full page HTML):
+                </label>
+                <textarea id="importRawTextInput" rows="5" style="width:100%; box-sizing:border-box; padding:8px; border:1px solid var(--border-color); border-radius:6px; background:var(--card-background); color:var(--text-color); font-family:inherit; font-size:0.9em;" placeholder="e.g. Classic Lasagna&#10;&#10;Ingredients:&#10;- 1 lb beef&#10;- 12 noodles&#10;&#10;Instructions:&#10;1. Boil pasta..."></textarea>
+                <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+                    <button type="button" class="import-fetch-btn" id="parseRawTextBtn" style="padding:7px 16px; font-size:0.88em;">
+                        <span>✨</span> <span>Parse Text</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="import-spinner-box" id="importSpinnerBox">
                 <div class="import-spinner"></div>
                 <div id="importSpinnerText" style="font-weight:600; color:var(--primary-pink); font-size:0.92em;">Scraping and parsing recipe details...</div>
@@ -2426,6 +2445,10 @@
             const closeImportModalBtn = document.getElementById('closeImportModalBtn');
             const importUrlInput = document.getElementById('importUrlInput');
             const fetchImportBtn = document.getElementById('fetchImportBtn');
+            const togglePasteTextBtn = document.getElementById('togglePasteTextBtn');
+            const pasteTextContainer = document.getElementById('pasteTextContainer');
+            const importRawTextInput = document.getElementById('importRawTextInput');
+            const parseRawTextBtn = document.getElementById('parseRawTextBtn');
             const importSpinnerBox = document.getElementById('importSpinnerBox');
             const importSpinnerText = document.getElementById('importSpinnerText');
             const importErrorAlert = document.getElementById('importErrorAlert');
@@ -2442,6 +2465,8 @@
                 if (!importModal) return;
                 importModal.style.display = 'flex';
                 importUrlInput.value = '';
+                if (importRawTextInput) importRawTextInput.value = '';
+                if (pasteTextContainer) pasteTextContainer.style.display = 'none';
                 importErrorAlert.style.display = 'none';
                 importPreviewCard.style.display = 'none';
                 importSpinnerBox.style.display = 'none';
@@ -2454,6 +2479,17 @@
                 importModal.style.display = 'none';
             }
 
+            if (togglePasteTextBtn && pasteTextContainer) {
+                togglePasteTextBtn.addEventListener('click', () => {
+                    const isHidden = pasteTextContainer.style.display === 'none';
+                    pasteTextContainer.style.display = isHidden ? 'block' : 'none';
+                    togglePasteTextBtn.textContent = isHidden ? '🔼 Hide Direct Paste Form' : '📋 Or Paste Recipe Text / Page Directly';
+                    if (isHidden && importRawTextInput) {
+                        importRawTextInput.focus();
+                    }
+                });
+            }
+
             if (openImportModalBtn) openImportModalBtn.addEventListener('click', window.openImportModal);
             if (closeImportModalBtn) closeImportModalBtn.addEventListener('click', closeImportModal);
 
@@ -2463,10 +2499,12 @@
                 });
             }
 
-            async function handleFetchRecipe() {
+            async function handleFetchRecipe(rawText = null) {
                 const url = importUrlInput.value.trim();
-                if (!url) {
-                    showToast('Please enter a recipe URL', 'error');
+                const payload = rawText ? { raw_text: rawText } : { url };
+
+                if (!rawText && !url) {
+                    showToast('Please enter a recipe URL or paste recipe text', 'error');
                     importUrlInput.focus();
                     return;
                 }
@@ -2474,13 +2512,14 @@
                 importErrorAlert.style.display = 'none';
                 importPreviewCard.style.display = 'none';
                 importSpinnerBox.style.display = 'block';
-                fetchImportBtn.disabled = true;
+                if (fetchImportBtn) fetchImportBtn.disabled = true;
+                if (parseRawTextBtn) parseRawTextBtn.disabled = true;
 
                 try {
                     const res = await fetch('/api/recipes/import-url', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url })
+                        body: JSON.stringify(payload)
                     });
 
                     const data = await res.json();
@@ -2491,12 +2530,39 @@
                     lastScrapedRecipe = data;
                     renderScrapedPreview(data);
                 } catch (err) {
-                    importErrorAlert.textContent = '❌ ' + (err.message || 'Could not extract recipe from this URL.');
+                    importErrorAlert.innerHTML = `
+                        <div>❌ ${escapeHtml(err.message || 'Could not extract recipe from this URL.')}</div>
+                        <div style="margin-top:8px; font-size:0.88em;">
+                            <strong>💡 Pro-Tip:</strong> Click <a href="#" id="errorFallbackPasteLink" style="color:var(--primary-pink); text-decoration:underline; font-weight:700;">Paste Recipe Text Directly</a> to paste and auto-parse the recipe in 1 click!
+                        </div>
+                    `;
                     importErrorAlert.style.display = 'block';
+
+                    const errLink = document.getElementById('errorFallbackPasteLink');
+                    if (errLink && pasteTextContainer) {
+                        errLink.addEventListener('click', (ev) => {
+                            ev.preventDefault();
+                            pasteTextContainer.style.display = 'block';
+                            if (togglePasteTextBtn) togglePasteTextBtn.textContent = '🔼 Hide Direct Paste Form';
+                            if (importRawTextInput) importRawTextInput.focus();
+                        });
+                    }
                 } finally {
                     importSpinnerBox.style.display = 'none';
-                    fetchImportBtn.disabled = false;
+                    if (fetchImportBtn) fetchImportBtn.disabled = false;
+                    if (parseRawTextBtn) parseRawTextBtn.disabled = false;
                 }
+            }
+
+            if (parseRawTextBtn) {
+                parseRawTextBtn.addEventListener('click', () => {
+                    const text = importRawTextInput ? importRawTextInput.value.trim() : '';
+                    if (!text) {
+                        showToast('Please paste recipe text first', 'error');
+                        return;
+                    }
+                    handleFetchRecipe(text);
+                });
             }
 
             function renderScrapedPreview(data) {
