@@ -519,6 +519,24 @@
             border-radius: 12px;
             cursor: pointer;
             font-size: 0.85em;
+            transition: all 0.2s ease;
+        }
+
+        .btn-consolidate-groceries {
+            background: var(--light-pink);
+            border: 1px solid var(--primary-pink);
+            color: var(--primary-pink);
+            padding: 4px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-consolidate-groceries:hover {
+            background: var(--primary-pink);
+            color: #fff;
         }
 
         /* --- Shared Love / Sticky Notes Board --- */
@@ -729,7 +747,10 @@
                 </div>
                 <div class="grocery-footer">
                     <span id="groceryCount">0 items</span>
-                    <button class="btn-clear-groceries" id="clearCheckedGroceriesBtn">Clear Checked</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-consolidate-groceries" id="consolidateGroceriesBtn" title="Combine duplicate items & sum ingredient quantities">✨ Consolidate</button>
+                        <button class="btn-clear-groceries" id="clearCheckedGroceriesBtn">Clear Checked</button>
+                    </div>
                 </div>
             </section>
         </div>
@@ -915,6 +936,26 @@
                 await fetch('/api/groceries/clear-checked', { method: 'POST' });
                 loadGroceries();
             });
+
+            const consolidateGroceriesBtn = document.getElementById('consolidateGroceriesBtn');
+            if (consolidateGroceriesBtn) {
+                consolidateGroceriesBtn.addEventListener('click', async () => {
+                    const originalText = consolidateGroceriesBtn.textContent;
+                    consolidateGroceriesBtn.textContent = 'Consolidating...';
+                    consolidateGroceriesBtn.disabled = true;
+                    try {
+                        const res = await fetch('/api/groceries/consolidate', { method: 'POST' });
+                        if (res.ok) {
+                            await loadGroceries();
+                        }
+                    } catch (e) {
+                        console.error('Consolidation failed', e);
+                    } finally {
+                        consolidateGroceriesBtn.textContent = originalText;
+                        consolidateGroceriesBtn.disabled = false;
+                    }
+                });
+            }
 
             // --- Sticky Notes Logic ---
             const stickiesContainer = document.getElementById('stickiesContainer');

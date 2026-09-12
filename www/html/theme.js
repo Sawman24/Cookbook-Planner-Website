@@ -640,25 +640,217 @@
         };
     }
 
+    // Backup & Restore Modal Generation
+    function createBackupModal() {
+        if (document.getElementById('backup-studio-modal')) return;
+
+        const modal = document.createElement('div');
+        modal.id = 'backup-studio-modal';
+        modal.style.cssText = `
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 99999;
+            overflow-y: auto;
+            backdrop-filter: blur(4px);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        `;
+
+        modal.innerHTML = `
+            <div style="
+                background: var(--card-background, #fff);
+                color: var(--text-color, #333);
+                border: 1px solid var(--border-color, #ddd);
+                border-radius: 16px;
+                max-width: 520px;
+                width: 100%;
+                box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+                padding: 24px;
+                position: relative;
+                box-sizing: border-box;
+                animation: themeModalPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            ">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h2 style="margin:0; font-size:1.35em; display:flex; align-items:center; gap:8px; color:var(--primary-pink);">
+                        💾 Data Backup & Restore
+                    </h2>
+                    <button id="backup-modal-close" style="
+                        background:none; border:none; font-size:1.4em; cursor:pointer; color:var(--text-color); opacity:0.7; padding:4px 8px;
+                    ">&times;</button>
+                </div>
+
+                <p style="margin:0 0 16px; font-size:0.9em; opacity:0.85;">
+                    Download a complete backup of your recipes, meal plans, groceries, stickies, and pantry, or restore from a previous JSON file.
+                </p>
+
+                <!-- Export Section -->
+                <div style="background:var(--background-color, #f9f9f9); border:1px solid var(--border-color, #eee); border-radius:12px; padding:16px; margin-bottom:16px;">
+                    <h3 style="margin:0 0 6px; font-size:1.05em; color:var(--primary-pink);">📥 Export Backup</h3>
+                    <p style="margin:0 0 12px; font-size:0.85em; opacity:0.8;">Save all your data into a portable <code>.json</code> file.</p>
+                    <button id="btn-download-backup" style="
+                        background:var(--primary-pink); color:white; border:none; padding:8px 18px; border-radius:20px; font-weight:bold; cursor:pointer; font-size:0.9em; display:inline-flex; align-items:center; gap:6px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+                    ">⬇️ Download Backup File</button>
+                </div>
+
+                <!-- Import Section -->
+                <div style="background:var(--background-color, #f9f9f9); border:1px solid var(--border-color, #eee); border-radius:12px; padding:16px;">
+                    <h3 style="margin:0 0 6px; font-size:1.05em; color:var(--primary-pink);">📤 Restore Backup</h3>
+                    <p style="margin:0 0 12px; font-size:0.85em; opacity:0.8;">Upload a previously exported <code>.json</code> backup.</p>
+
+                    <input type="file" id="backup-file-input" accept=".json" style="margin-bottom:12px; font-size:0.85em; display:block; width:100%;">
+
+                    <div style="margin-bottom:14px; font-size:0.88em;">
+                        <label style="display:flex; align-items:center; gap:8px; margin-bottom:6px; cursor:pointer;">
+                            <input type="radio" name="restore-mode" value="merge" checked>
+                            <span><strong>Merge Mode (Recommended)</strong>: Add new items without deleting current ones</span>
+                        </label>
+                        <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:#d32f2f;">
+                            <input type="radio" name="restore-mode" value="replace">
+                            <span><strong>Replace Mode</strong>: Overwrite entire database with backup</span>
+                        </label>
+                    </div>
+
+                    <button id="btn-upload-restore" style="
+                        background:#2e7d32; color:white; border:none; padding:8px 18px; border-radius:20px; font-weight:bold; cursor:pointer; font-size:0.9em; display:inline-flex; align-items:center; gap:6px;
+                    ">🔄 Restore Data</button>
+                    <span id="restore-status" style="margin-left:10px; font-size:0.85em; font-weight:600;"></span>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        const closeBtn = document.getElementById('backup-modal-close');
+        const downloadBtn = document.getElementById('btn-download-backup');
+        const restoreBtn = document.getElementById('btn-upload-restore');
+        const fileInput = document.getElementById('backup-file-input');
+        const statusSpan = document.getElementById('restore-status');
+
+        function closeBackupModal() {
+            modal.style.display = 'none';
+        }
+
+        closeBtn.addEventListener('click', closeBackupModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeBackupModal();
+        });
+
+        downloadBtn.addEventListener('click', async () => {
+            try {
+                downloadBtn.disabled = true;
+                downloadBtn.textContent = '⏳ Preparing Backup...';
+                const res = await fetch('/api/backup');
+                if (!res.ok) throw new Error('Backup failed');
+                const data = await res.json();
+                const jsonStr = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const today = new Date().toISOString().slice(0, 10);
+                a.href = url;
+                a.download = `cookbook-backup-${today}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                downloadBtn.textContent = '✅ Download Started!';
+                setTimeout(() => {
+                    downloadBtn.disabled = false;
+                    downloadBtn.textContent = '⬇️ Download Backup File';
+                }, 2000);
+            } catch (err) {
+                alert('Failed to download backup: ' + err.message);
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = '⬇️ Download Backup File';
+            }
+        });
+
+        restoreBtn.addEventListener('click', async () => {
+            const file = fileInput.files && fileInput.files[0];
+            if (!file) {
+                alert('Please select a .json backup file first.');
+                return;
+            }
+
+            const selectedMode = document.querySelector('input[name="restore-mode"]:checked')?.value || 'merge';
+            if (selectedMode === 'replace') {
+                const confirmed = confirm('⚠️ WARNING: Replace mode will overwrite your current recipes, planner, groceries, and pantry with the backup file. Are you sure?');
+                if (!confirmed) return;
+            }
+
+            try {
+                restoreBtn.disabled = true;
+                statusSpan.textContent = '⏳ Restoring...';
+                const fileText = await file.text();
+                const backupJson = JSON.parse(fileText);
+
+                const res = await fetch('/api/restore', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mode: selectedMode, data: backupJson })
+                });
+
+                const result = await res.json();
+                if (res.ok) {
+                    statusSpan.textContent = '✅ Restored! Reloading...';
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1200);
+                } else {
+                    throw new Error(result.error || 'Restore failed');
+                }
+            } catch (err) {
+                statusSpan.textContent = '❌ Error';
+                alert('Restore failed: ' + err.message);
+                restoreBtn.disabled = false;
+            }
+        });
+
+        window.openBackupModal = function () {
+            statusSpan.textContent = '';
+            fileInput.value = '';
+            modal.style.display = 'flex';
+        };
+    }
+
     // Initialize when DOM is ready
     function init() {
         applyThemeCSS(loadThemeConfig());
         setupDarkModeObserver();
         createThemeModal();
+        createBackupModal();
 
-        // Check if header exists and add theme button if not present
+        // Check if header exists and add theme & backup buttons if not present
         const themeSwitchWrappers = document.querySelectorAll('.theme-switch-wrapper');
         themeSwitchWrappers.forEach(wrapper => {
-            if (!wrapper.querySelector('.theme-btn-customizer')) {
-                const btn = document.createElement('button');
-                btn.className = 'theme-btn-customizer';
-                btn.type = 'button';
-                btn.innerHTML = '🎨 Theme';
-                btn.title = 'Customize website colors & theme';
-                btn.addEventListener('click', () => {
+            if (!wrapper.querySelector('.theme-btn-backup')) {
+                const backupBtn = document.createElement('button');
+                backupBtn.className = 'theme-btn-customizer theme-btn-backup';
+                backupBtn.type = 'button';
+                backupBtn.innerHTML = '💾 Backup';
+                backupBtn.title = 'Backup & Restore your data';
+                backupBtn.addEventListener('click', () => {
+                    if (window.openBackupModal) window.openBackupModal();
+                });
+                wrapper.insertBefore(backupBtn, wrapper.firstChild);
+            }
+            if (!wrapper.querySelector('.theme-btn-theme')) {
+                const themeBtn = document.createElement('button');
+                themeBtn.className = 'theme-btn-customizer theme-btn-theme';
+                themeBtn.type = 'button';
+                themeBtn.innerHTML = '🎨 Theme';
+                themeBtn.title = 'Customize website colors & theme';
+                themeBtn.addEventListener('click', () => {
                     if (window.openThemeModal) window.openThemeModal();
                 });
-                wrapper.insertBefore(btn, wrapper.firstChild);
+                wrapper.insertBefore(themeBtn, wrapper.firstChild);
             }
         });
     }

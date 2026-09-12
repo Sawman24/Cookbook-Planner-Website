@@ -378,8 +378,287 @@
             font-weight: 700;
             padding: 3px 10px;
             border-radius: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 6px;
             width: fit-content;
+        }
+
+        /* Recipe Metadata Badges */
+        .recipe-meta-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 4px 0 10px;
+        }
+
+        .meta-badge {
+            font-size: 0.78em;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 12px;
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .meta-badge.diff-badge.easy {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-color: #C8E6C9;
+        }
+        .meta-badge.diff-badge.medium {
+            background: #FFF8E1;
+            color: #F57F17;
+            border-color: #FFE082;
+        }
+        .meta-badge.diff-badge.hard {
+            background: #FFEBEE;
+            color: #C62828;
+            border-color: #FFCDD2;
+        }
+
+        body.dark-mode .meta-badge.diff-badge.easy {
+            background: rgba(46, 125, 50, 0.25);
+            color: #81C784;
+            border-color: #2E7D32;
+        }
+        body.dark-mode .meta-badge.diff-badge.medium {
+            background: rgba(245, 127, 23, 0.25);
+            color: #FFD54F;
+            border-color: #F57F17;
+        }
+        body.dark-mode .meta-badge.diff-badge.hard {
+            background: rgba(198, 40, 40, 0.25);
+            color: #E57373;
+            border-color: #C62828;
+        }
+
+        /* Pantry Controls & Drawer */
+        .pantry-bar-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .btn-pantry-toggle {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 7px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-pantry-toggle:hover {
+            border-color: var(--primary-pink);
+            color: var(--primary-pink);
+        }
+
+        .btn-pantry-toggle.active {
+            background: var(--light-pink);
+            border-color: var(--primary-pink);
+            color: var(--primary-pink);
+        }
+
+        .btn-pantry-match {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 7px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.88em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-pantry-match:hover {
+            border-color: var(--primary-pink);
+            color: var(--primary-pink);
+        }
+
+        .btn-pantry-match.active {
+            background: var(--primary-pink);
+            color: white;
+            border-color: var(--primary-pink);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .pantry-drawer {
+            width: 100%;
+            margin-top: 12px;
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+
+        .pantry-staples-label {
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 6px;
+            opacity: 0.8;
+        }
+
+        .pantry-staples-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .pantry-chip {
+            background: var(--background-color);
+            border: 1px dashed var(--border-color);
+            color: var(--text-color);
+            padding: 3px 10px;
+            border-radius: 14px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .pantry-chip:hover {
+            border-color: var(--primary-pink);
+            color: var(--primary-pink);
+            background: var(--light-pink);
+        }
+
+        .pantry-chip.in-pantry {
+            background: var(--light-pink);
+            border: 1px solid var(--primary-pink);
+            color: var(--primary-pink);
+            font-weight: 600;
+        }
+
+        .pantry-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .pantry-input-group input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .pantry-input-group button {
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .pantry-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-height: 140px;
+            overflow-y: auto;
+        }
+
+        .pantry-tag {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 3px 10px;
+            border-radius: 16px;
+            font-size: 0.82em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pantry-tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+            color: #e53935;
+            font-size: 1.1em;
+            line-height: 1;
+        }
+
+        .btn-text-danger {
+            background: none;
+            border: none;
+            color: #e53935;
+            cursor: pointer;
+            font-size: 0.82em;
+            text-decoration: underline;
+        }
+
+        .pantry-match-badge {
+            margin: 6px 0 10px;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.82em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .pantry-match-badge.match-full {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border: 1px solid #C8E6C9;
+        }
+
+        .pantry-match-badge.match-almost {
+            background: #FFF8E1;
+            color: #F57F17;
+            border: 1px solid #FFE082;
+        }
+
+        .pantry-match-badge.match-partial {
+            background: var(--background-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        body.dark-mode .pantry-match-badge.match-full {
+            background: rgba(46, 125, 50, 0.25);
+            color: #81C784;
+            border-color: #2E7D32;
+        }
+        body.dark-mode .pantry-match-badge.match-almost {
+            background: rgba(245, 127, 23, 0.25);
+            color: #FFD54F;
+            border-color: #F57F17;
+        }
+
+        .btn-quick-missing-grocery {
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            cursor: pointer;
+            font-weight: 600;
         }
 
         /* Scaler Control */
@@ -977,6 +1256,29 @@
                     </div>
                 </div>
 
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 8px;">
+                    <div>
+                        <label for="recipePrepTime">⏱️ Prep Time:</label>
+                        <input type="text" id="recipePrepTime" placeholder="e.g., 15 mins">
+                    </div>
+                    <div>
+                        <label for="recipeCookTime">🔥 Cook Time:</label>
+                        <input type="text" id="recipeCookTime" placeholder="e.g., 30 mins">
+                    </div>
+                    <div>
+                        <label for="recipeDifficulty">Difficulty:</label>
+                        <select id="recipeDifficulty">
+                            <option value="Easy">🟢 Easy</option>
+                            <option value="Medium">🟡 Medium</option>
+                            <option value="Hard">🔴 Hard</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="recipeServings">👥 Servings:</label>
+                        <input type="text" id="recipeServings" placeholder="e.g., 4 servings">
+                    </div>
+                </div>
+
                 <label for="recipeIngredients">Ingredients (one per line, e.g. "2 Cups Flour"):</label>
                 <textarea id="recipeIngredients" rows="5" placeholder="- 2 Cups Flour&#10;- 1 Tsp Cinnamon&#10;- 1 Cup Plant Milk" required></textarea>
 
@@ -992,7 +1294,38 @@
                 <label for="recipeSearch" style="font-weight:bold; color:var(--primary-pink);">Search:</label>
                 <input type="text" id="recipeSearch" placeholder="Type to search title or ingredient...">
             </div>
-            <div class="category-filters" id="categoryFilters">
+
+            <div class="pantry-bar-row">
+                <button type="button" class="btn-pantry-toggle" id="pantryToggleBtn">
+                    🥫 My Pantry <span id="pantryCountBadge">(0 items)</span> ▾
+                </button>
+                <button type="button" class="btn-pantry-match" id="pantryMatchBtn">
+                    ✨ What Can I Make?
+                </button>
+            </div>
+
+            <!-- Collapsible Pantry Drawer -->
+            <div class="pantry-drawer" id="pantryDrawer" style="display:none;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <strong style="color:var(--primary-pink); font-size:1em;">🥫 Kitchen & Pantry Ingredients</strong>
+                    <button type="button" id="clearPantryBtn" class="btn-text-danger">Clear All</button>
+                </div>
+                <p style="font-size:0.85em; opacity:0.8; margin:0 0 10px;">
+                    Add ingredients you currently have at home to see recipes you can make right away!
+                </p>
+
+                <div class="pantry-staples-label">Quick-add common staples:</div>
+                <div class="pantry-staples-chips" id="pantryStaplesChips"></div>
+
+                <div class="pantry-input-group">
+                    <input type="text" id="pantryInput" placeholder="Add items (e.g. olive oil, garlic, lemon)...">
+                    <button type="button" id="addPantryBtn">+ Add</button>
+                </div>
+
+                <div class="pantry-tags-container" id="pantryTagsContainer"></div>
+            </div>
+
+            <div class="category-filters" id="categoryFilters" style="margin-top:12px; width:100%;">
                 <button class="category-btn active" data-category="All">All</button>
                 <button class="category-btn" data-category="Favorites">⭐ Favorites</button>
                 <button class="category-btn" data-category="Breakfast">Breakfast</button>
@@ -1126,6 +1459,29 @@
                     <option value="Drinks & Cocktails">Drinks & Cocktails</option>
                 </select>
 
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 12px;">
+                    <div>
+                        <label for="editRecipePrepTime" style="font-weight:bold; color:var(--primary-pink); display:block; margin-bottom:4px; font-size:0.9em;">⏱️ Prep:</label>
+                        <input type="text" id="editRecipePrepTime" placeholder="e.g. 15m" style="width:100%; padding:8px; border:1px solid var(--border-color); border-radius:6px; background:var(--background-color); color:var(--text-color); box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label for="editRecipeCookTime" style="font-weight:bold; color:var(--primary-pink); display:block; margin-bottom:4px; font-size:0.9em;">🔥 Cook:</label>
+                        <input type="text" id="editRecipeCookTime" placeholder="e.g. 30m" style="width:100%; padding:8px; border:1px solid var(--border-color); border-radius:6px; background:var(--background-color); color:var(--text-color); box-sizing:border-box;">
+                    </div>
+                    <div>
+                        <label for="editRecipeDifficulty" style="font-weight:bold; color:var(--primary-pink); display:block; margin-bottom:4px; font-size:0.9em;">Difficulty:</label>
+                        <select id="editRecipeDifficulty" style="width:100%; padding:8px; border:1px solid var(--border-color); border-radius:6px; background:var(--background-color); color:var(--text-color); box-sizing:border-box;">
+                            <option value="Easy">🟢 Easy</option>
+                            <option value="Medium">🟡 Medium</option>
+                            <option value="Hard">🔴 Hard</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="editRecipeServings" style="font-weight:bold; color:var(--primary-pink); display:block; margin-bottom:4px; font-size:0.9em;">👥 Servings:</label>
+                        <input type="text" id="editRecipeServings" placeholder="e.g. 4" style="width:100%; padding:8px; border:1px solid var(--border-color); border-radius:6px; background:var(--background-color); color:var(--text-color); box-sizing:border-box;">
+                    </div>
+                </div>
+
                 <label for="editRecipeIngredients" style="font-weight:bold; color:var(--primary-pink); display:block; margin-bottom:5px;">Ingredients:</label>
                 <textarea id="editRecipeIngredients" rows="6" style="width:100%; padding:10px; margin-bottom:12px; border:1px solid var(--border-color); border-radius:6px; background:var(--background-color); color:var(--text-color); box-sizing:border-box; font-family:inherit;" required></textarea>
 
@@ -1152,8 +1508,16 @@
             const categoryFilters = document.getElementById('categoryFilters');
 
             let allRecipesData = [];
+            let allPantryData = [];
+            let isPantryMatchMode = false;
             let activeCategory = 'All';
             let recipeScales = {}; // recipeId -> scale (0.5, 1, 2, 3)
+
+            const COMMON_STAPLES = [
+                'Olive Oil', 'Garlic', 'Onion', 'Salt', 'Black Pepper',
+                'Butter', 'Eggs', 'All-Purpose Flour', 'Milk', 'Sugar',
+                'Rice', 'Pasta', 'Soy Sauce', 'Chicken Breast', 'Cheddar Cheese', 'Tomato Sauce'
+            ];
 
             // Dark Mode
             const themeSwitch = document.getElementById('checkbox');
@@ -1231,6 +1595,44 @@
                 return rounded % 1 === 0 ? rounded.toString() : rounded.toFixed(1);
             }
 
+            // Clean ingredient for pantry matching
+            function extractCoreIngredient(line) {
+                let s = line.replace(/^[-*•\d\/\.\s]+/, '').trim();
+                s = s.replace(/^(cups?|tbsp|tablespoons?|tsp|teaspoons?|oz|ounces?|lbs?|pounds?|grams?|g|kg|ml|liters?|cloves?|cans?|slices?|stalks?|pinches?|packages?|pkgs?|bunches?|heads?)\s+/i, '');
+                s = s.replace(/,.*$/, '').trim(); // remove everything after comma (e.g. ", minced")
+                s = s.replace(/\(.*?\)/g, '').trim(); // remove parens
+                s = s.replace(/\b(chopped|diced|sliced|minced|divided|crushed|fresh|frozen|dry|melted|softened|to taste|optional|grated|peeled)\b/gi, '').trim();
+                return s.toLowerCase();
+            }
+
+            function checkPantryMatch(recipe) {
+                if (!recipe.ingredients || allPantryData.length === 0) {
+                    return { percent: 0, matched: 0, total: 0, missing: [] };
+                }
+
+                const lines = recipe.ingredients.split('\n').map(l => l.trim()).filter(Boolean);
+                if (lines.length === 0) return { percent: 0, matched: 0, total: 0, missing: [] };
+
+                const pantryNames = allPantryData.map(p => p.item.toLowerCase());
+                let matched = 0;
+                let missing = [];
+
+                lines.forEach(rawLine => {
+                    const core = extractCoreIngredient(rawLine);
+                    if (!core) return;
+                    const hasMatch = pantryNames.some(p => core.includes(p) || p.includes(core));
+                    if (hasMatch) {
+                        matched++;
+                    } else {
+                        missing.push(rawLine.replace(/^[-*•\s]+/, ''));
+                    }
+                });
+
+                const total = lines.length;
+                const percent = Math.round((matched / total) * 100);
+                return { percent, matched, total, missing };
+            }
+
             async function loadRecipes() {
                 try {
                     const res = await fetch('/api/recipes');
@@ -1241,6 +1643,137 @@
                     recipesContainer.innerHTML = '<p>Could not load recipes. Please check the backend connection.</p>';
                 }
             }
+
+            async function loadPantry() {
+                try {
+                    const res = await fetch('/api/pantry');
+                    if (res.ok) {
+                        allPantryData = await res.json();
+                        renderPantryUI();
+                    }
+                } catch (e) {
+                    console.error('Failed to load pantry', e);
+                }
+            }
+
+            function renderPantryUI() {
+                const countBadge = document.getElementById('pantryCountBadge');
+                const staplesContainer = document.getElementById('pantryStaplesChips');
+                const tagsContainer = document.getElementById('pantryTagsContainer');
+
+                countBadge.textContent = `(${allPantryData.length} items)`;
+
+                const pantryNamesLower = allPantryData.map(p => p.item.toLowerCase());
+
+                // Render Quick Staples Chips
+                staplesContainer.innerHTML = COMMON_STAPLES.map(staple => {
+                    const inPantry = pantryNamesLower.includes(staple.toLowerCase());
+                    return `<button type="button" class="pantry-chip ${inPantry ? 'in-pantry' : ''}" data-staple="${escapeHtml(staple)}">${inPantry ? '✓ ' : '+ '}${escapeHtml(staple)}</button>`;
+                }).join('');
+
+                // Render Pantry Tags
+                if (allPantryData.length === 0) {
+                    tagsContainer.innerHTML = '<span style="font-size:0.85em; opacity:0.7;">No pantry items added yet. Click quick staples or type above!</span>';
+                } else {
+                    tagsContainer.innerHTML = allPantryData.map(item => `
+                        <span class="pantry-tag">
+                            ${escapeHtml(item.item)}
+                            <span class="pantry-tag-remove" data-pantry-id="${item.id}" title="Remove item">&times;</span>
+                        </span>
+                    `).join('');
+                }
+
+                // Attach staple chip click listeners
+                staplesContainer.querySelectorAll('.pantry-chip').forEach(chip => {
+                    chip.addEventListener('click', async () => {
+                        const stapleName = chip.dataset.staple;
+                        const existing = allPantryData.find(p => p.item.toLowerCase() === stapleName.toLowerCase());
+                        if (existing) {
+                            // Remove
+                            await fetch(`/api/pantry/${existing.id}`, { method: 'DELETE' });
+                        } else {
+                            // Add
+                            await fetch('/api/pantry', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ item: stapleName })
+                            });
+                        }
+                        await loadPantry();
+                        renderRecipes();
+                    });
+                });
+
+                // Attach tag remove listeners
+                tagsContainer.querySelectorAll('.pantry-tag-remove').forEach(rm => {
+                    rm.addEventListener('click', async (e) => {
+                        const id = e.target.dataset.pantryId;
+                        await fetch(`/api/pantry/${id}`, { method: 'DELETE' });
+                        await loadPantry();
+                        renderRecipes();
+                    });
+                });
+            }
+
+            // Pantry Controls Listeners
+            const pantryToggleBtn = document.getElementById('pantryToggleBtn');
+            const pantryDrawer = document.getElementById('pantryDrawer');
+            const pantryMatchBtn = document.getElementById('pantryMatchBtn');
+            const addPantryBtn = document.getElementById('addPantryBtn');
+            const pantryInput = document.getElementById('pantryInput');
+            const clearPantryBtn = document.getElementById('clearPantryBtn');
+
+            pantryToggleBtn.addEventListener('click', () => {
+                const isOpen = pantryDrawer.style.display !== 'none';
+                pantryDrawer.style.display = isOpen ? 'none' : 'block';
+                pantryToggleBtn.classList.toggle('active', !isOpen);
+            });
+
+            pantryMatchBtn.addEventListener('click', () => {
+                isPantryMatchMode = !isPantryMatchMode;
+                pantryMatchBtn.classList.toggle('active', isPantryMatchMode);
+                if (isPantryMatchMode && allPantryData.length === 0) {
+                    pantryDrawer.style.display = 'block';
+                    pantryToggleBtn.classList.add('active');
+                    showToast('💡 Add some pantry items above to find matching recipes!', 'info');
+                }
+                renderRecipes();
+            });
+
+            async function addCustomPantry() {
+                const text = pantryInput.value.trim();
+                if (!text) return;
+                try {
+                    const res = await fetch('/api/pantry', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ item: text })
+                    });
+                    if (res.ok) {
+                        pantryInput.value = '';
+                        await loadPantry();
+                        renderRecipes();
+                    }
+                } catch (e) {
+                    showToast('Failed to add to pantry', 'error');
+                }
+            }
+
+            addPantryBtn.addEventListener('click', addCustomPantry);
+            pantryInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addCustomPantry();
+                }
+            });
+
+            clearPantryBtn.addEventListener('click', async () => {
+                if (confirm('Are you sure you want to clear all pantry ingredients?')) {
+                    await fetch('/api/pantry/clear', { method: 'POST' });
+                    await loadPantry();
+                    renderRecipes();
+                }
+            });
 
             function renderRecipes() {
                 const search = (recipeSearchInput.value || '').toLowerCase();
@@ -1255,6 +1788,16 @@
                     return r.category === activeCategory;
                 });
 
+                // Attach pantry match data
+                filtered.forEach(r => {
+                    r._pantryMatch = checkPantryMatch(r);
+                });
+
+                // Sort by pantry match if "What Can I Make?" is active
+                if (isPantryMatchMode) {
+                    filtered.sort((a, b) => (b._pantryMatch.percent - a._pantryMatch.percent));
+                }
+
                 if (filtered.length === 0) {
                     if (allRecipesData.length === 0) {
                         recipesContainer.innerHTML = '<p style="grid-column: 1/-1; text-align:center; padding: 36px 20px; opacity:0.85; font-size:1.05em;">🍽️ No recipes yet! Use the form above to add your first recipe.</p>';
@@ -1268,6 +1811,24 @@
                 filtered.forEach(recipe => {
                     const scale = recipeScales[recipe.id] || 1;
                     const scaledIngr = scaleIngredients(recipe.ingredients, scale);
+                    const match = recipe._pantryMatch;
+
+                    let pantryBadgeHtml = '';
+                    if (allPantryData.length > 0) {
+                        if (match.percent === 100) {
+                            pantryBadgeHtml = `<div class="pantry-match-badge match-full"><span>✨ 100% Ready to Cook! (All ingredients in pantry)</span></div>`;
+                        } else if (match.missing.length === 1) {
+                            const miss = escapeHtml(match.missing[0]);
+                            pantryBadgeHtml = `
+                                <div class="pantry-match-badge match-almost">
+                                    <span>🟡 Missing 1 item: <strong>${miss}</strong></span>
+                                    <button type="button" class="btn-quick-missing-grocery" data-item="${miss}" title="Add missing item to grocery list">+ Grocery</button>
+                                </div>
+                            `;
+                        } else if (isPantryMatchMode && match.total > 0) {
+                            pantryBadgeHtml = `<div class="pantry-match-badge match-partial"><span>🥫 Matches ${match.matched}/${match.total} ingredients (${match.percent}%)</span></div>`;
+                        }
+                    }
 
                     const card = document.createElement('div');
                     card.classList.add('recipe-card');
@@ -1279,6 +1840,18 @@
                             </button>
                         </div>
                         <span class="category-badge">${escapeHtml(recipe.category || 'General')}</span>
+
+                        <!-- Recipe Metadata Badges -->
+                        <div class="recipe-meta-badges">
+                            ${recipe.prep_time ? `<span class="meta-badge" title="Prep Time">⏱️ ${escapeHtml(recipe.prep_time)}</span>` : ''}
+                            ${recipe.cook_time ? `<span class="meta-badge" title="Cook Time">🔥 ${escapeHtml(recipe.cook_time)}</span>` : ''}
+                            <span class="meta-badge diff-badge ${recipe.difficulty ? recipe.difficulty.toLowerCase() : 'easy'}" title="Difficulty">
+                                ${recipe.difficulty === 'Hard' ? '🔴 Hard' : (recipe.difficulty === 'Medium' ? '🟡 Medium' : '🟢 Easy')}
+                            </span>
+                            ${recipe.servings ? `<span class="meta-badge" title="Servings">👥 ${escapeHtml(recipe.servings)}</span>` : ''}
+                        </div>
+
+                        ${pantryBadgeHtml}
 
                         <div class="scaler-bar">
                             <span>Servings:</span>
@@ -1332,6 +1905,25 @@
                     });
                 });
 
+                // Quick add missing pantry ingredient to grocery list
+                document.querySelectorAll('.btn-quick-missing-grocery').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const itemText = e.target.dataset.item;
+                        try {
+                            const res = await fetch('/api/groceries', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ item: itemText })
+                            });
+                            if (res.ok) {
+                                showToast(`🛒 Added "${itemText}" to Grocery List!`, 'success');
+                            }
+                        } catch (err) {
+                            showToast('Failed to add item to grocery list', 'error');
+                        }
+                    });
+                });
+
                 // Add to grocery list
                 document.querySelectorAll('.btn-grocery').forEach(b => {
                     b.addEventListener('click', async (e) => {
@@ -1344,7 +1936,7 @@
                             const res = await fetch('/api/groceries', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ item: ingredientsText })
+                                body: JSON.stringify({ item: ingredientsText, consolidate: true })
                             });
                             if (res.ok) {
                                 showToast(`🛒 Added ingredients from "${rec.title}" to Grocery List!`, 'success');
@@ -1404,6 +1996,10 @@
                 e.preventDefault();
                 const title = document.getElementById('recipeTitle').value.trim();
                 const category = document.getElementById('recipeCategory').value;
+                const prep_time = document.getElementById('recipePrepTime').value.trim();
+                const cook_time = document.getElementById('recipeCookTime').value.trim();
+                const difficulty = document.getElementById('recipeDifficulty').value;
+                const servings = document.getElementById('recipeServings').value.trim();
                 const ingredients = document.getElementById('recipeIngredients').value.trim();
                 const instructions = document.getElementById('recipeInstructions').value.trim();
 
@@ -1411,7 +2007,7 @@
                     const res = await fetch('/api/recipes', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ title, category, ingredients, instructions })
+                        body: JSON.stringify({ title, category, prep_time, cook_time, difficulty, servings, ingredients, instructions })
                     });
                     if (res.ok) {
                         showToast('Recipe added successfully!', 'success');
@@ -1444,6 +2040,10 @@
                 }
                 catSelect.value = cat;
                 
+                document.getElementById('editRecipePrepTime').value = rec.prep_time || '';
+                document.getElementById('editRecipeCookTime').value = rec.cook_time || '';
+                document.getElementById('editRecipeDifficulty').value = rec.difficulty || 'Easy';
+                document.getElementById('editRecipeServings').value = rec.servings || '';
                 document.getElementById('editRecipeIngredients').value = rec.ingredients;
                 document.getElementById('editRecipeInstructions').value = rec.instructions;
                 editModal.style.display = 'flex';
@@ -1456,6 +2056,10 @@
                 const id = document.getElementById('editRecipeId').value;
                 const title = document.getElementById('editRecipeTitle').value.trim();
                 const category = document.getElementById('editRecipeCategory').value;
+                const prep_time = document.getElementById('editRecipePrepTime').value.trim();
+                const cook_time = document.getElementById('editRecipeCookTime').value.trim();
+                const difficulty = document.getElementById('editRecipeDifficulty').value;
+                const servings = document.getElementById('editRecipeServings').value.trim();
                 const ingredients = document.getElementById('editRecipeIngredients').value.trim();
                 const instructions = document.getElementById('editRecipeInstructions').value.trim();
 
@@ -1463,7 +2067,7 @@
                     const res = await fetch(`/api/recipes/${id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ title, category, ingredients, instructions })
+                        body: JSON.stringify({ title, category, prep_time, cook_time, difficulty, servings, ingredients, instructions })
                     });
                     if (res.ok) {
                         showToast('Recipe updated successfully!', 'success');
@@ -1623,10 +2227,13 @@
             function openCookMode(id) {
                 const rec = allRecipesData.find(r => r.id === id);
                 if (!rec) return;
-                const scale = recipeScales[id] || 1;
-                const scaledIngr = scaleIngredients(rec.ingredients, scale);
-
-                cookTitle.textContent = `🍳 ${rec.title} (${scale}x)`;
+                let metaParts = [];
+                if (rec.prep_time) metaParts.push(`⏱️ Prep: ${escapeHtml(rec.prep_time)}`);
+                if (rec.cook_time) metaParts.push(`🔥 Cook: ${escapeHtml(rec.cook_time)}`);
+                if (rec.difficulty) metaParts.push(`🏷️ ${escapeHtml(rec.difficulty)}`);
+                if (rec.servings) metaParts.push(`👥 ${escapeHtml(rec.servings)}`);
+                const metaSummary = metaParts.length > 0 ? ` <span style="font-size:0.65em; opacity:0.85; font-weight:normal; margin-left:8px;">(${metaParts.join(' • ')})</span>` : '';
+                cookTitle.innerHTML = `🍳 ${escapeHtml(rec.title)} (${scale}x)${metaSummary}`;
                 currentRecipeSteps = parseInstructionSteps(rec.instructions);
                 currentStepIdx = 0;
                 completedStepIndices = new Set();
@@ -1876,6 +2483,7 @@
 
             // Initial load
             loadRecipes();
+            loadPantry();
         });
     </script>
 </body>
